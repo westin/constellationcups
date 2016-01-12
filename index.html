@@ -38,6 +38,7 @@
   <script type="text/javascript">
     var map;
     var LatLngControl;
+    var directionSteps;
 
     function LatLngControl(map) {
       this.setMap(map);
@@ -86,7 +87,7 @@
 
     function getDirectionSteps(response) {
       var bounds = new google.maps.LatLngBounds();
-      var directionSteps = []
+      directionSteps = []
       var legs = response.routes[0].legs;
       $(legs).each(function(index, item) {
         $(item.steps).each(function(index, item) {
