@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="5px" height="5px" viewBox="0 0 5 5" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.4 (17249) - http://www.bohemiancoding.com/sketch -->
+    <title>star1</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="globe" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Artboard-2" sketch:type="MSArtboardGroup" transform="translate(-262.000000, -167.000000)" fill="#000000">
+            <path d="M262.825007,167 L264.540905,168.36331 L266.278803,167.113278 L265.258953,169.026826 L267.017681,170.369305 L264.97927,170.097463 L264.812747,171.927808 L264.021794,169.889397 L262,169.845163 L263.561077,168.830345 L262.825007,167 Z" id="star1" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>
