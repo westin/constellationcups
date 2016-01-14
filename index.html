@@ -37,7 +37,7 @@
   <canvas id="mainCanvas" resize keepalive="true"></canvas>
   <div id="map"></div>
   <script type="text/javascript">
-    var STAR_MAX_DISTANCE = 70;
+    var STAR_MAX_DISTANCE = 5;
     var STAR_SCALE = 2.2;
 
 
@@ -46,8 +46,10 @@
     var LatLngControl;
     var directionSteps;
 
-    var starPath1 = "M262.825007,167 L264.540905,168.36331 L266.278803,167.113278 L265.258953,169.026826 L267.017681,170.369305 L264.97927,170.097463 L264.812747,171.927808 L264.021794,169.889397 L262,169.845163 L263.561077,168.830345 L262.825007,167 Z"
-    var starPath2 = "M249.13078,166 L251.080893,168.870331 L253.836463,167.733216 L251.98488,170.002364 L253.767115,172.276759 L251.206474,171.274241 L250.45184,173.864064 L249.974271,170.847987 L247,170.889957 L249.865085,169.402821 L249.13078,166 Z"
+    var starPath1 =
+      "M262.825007,167 L264.540905,168.36331 L266.278803,167.113278 L265.258953,169.026826 L267.017681,170.369305 L264.97927,170.097463 L264.812747,171.927808 L264.021794,169.889397 L262,169.845163 L263.561077,168.830345 L262.825007,167 Z"
+    var starPath2 =
+      "M249.13078,166 L251.080893,168.870331 L253.836463,167.733216 L251.98488,170.002364 L253.767115,172.276759 L251.206474,171.274241 L250.45184,173.864064 L249.974271,170.847987 L247,170.889957 L249.865085,169.402821 L249.13078,166 Z"
 
     function LatLngControl(map) {
       this.setMap(map);
@@ -76,7 +78,7 @@
 
       latLngControl = new LatLngControl(map);
 
-      getDirections(directionsService, "40.442533, -79.942521", "40.435198, -79.922658");
+      getDirections(directionsService, "40.443489, -79.941609", "40.466276, -79.965096");
     }
 
 
@@ -100,17 +102,30 @@
       var legs = response.routes[0].legs;
       $(legs).each(function(index, item) {
         $(item.steps).each(function(index, item) {
+          var pathLength = item.path.length
+          var pathStart = item.path[0]
+          var pathEnd = item.path[pathLength - 1]
+            // console.log(item.path[0].lat(), item.path[0].lng())
           var legPoints = []
           $(item.path).each(function(index, item) {
             bounds.extend(item);
             legPoints.push([item.lat(), item.lng()])
           });
+          // set a variable so we know if this direction contains the "toward" thing
+          if (item.instructions.indexOf('toward') != -1) {
+            var toward = false;
+          } else {
+            var toward = true;
+          }
           var step = {
             step: index + 1,
             instructions: item.instructions,
             distance: item.distance.text,
             duration: item.duration.text,
-            points: legPoints
+            points: legPoints,
+            start: pathStart,
+            end: pathEnd,
+            isToward: toward
           }
           directionSteps.push(step)
         });
@@ -128,27 +143,41 @@
       directionPath.strokeWidth = 2;
       directionPath.dashArray = [2, 5];
       $(directionSteps).each(function(index, item) {
-        for (i = 0; i < item.points.length; i++) {
-          var pixelCoords = latLngControl.updatePosition(new google.maps.LatLng(item.points[i][0], item.points[i][1]))
-          // console.log(pixelCoords)
-          directionPath.add(new Point(pixelCoords[0], pixelCoords[1]))
+          for (i = 0; i < item.points.length; i++) {
+            var pixelCoords = latLngControl.updatePosition(new google.maps.LatLng(item.points[i][0], item.points[i][1]))
+              // console.log(pixelCoords)
+            directionPath.add(new Point(pixelCoords[0], pixelCoords[1]))
+          }
+        })
+        directionPath.flatten(STAR_MAX_DISTANCE);
+        // console.log(directionSteps)
+      $(directionSteps).each(function(index, item) {
+        var step = directionSteps[index]
+        if (step.isToward == true) {
+          console.log(directionSteps[index].instructions)
+          drawStarAtPoint(step.start.lat(), step.start.lng())
         }
-      })
-      directionPath.flatten(STAR_MAX_DISTANCE);
-      $(directionPath.segments).each(function(index, item) {
-        console.log(item.point.x, item.point.y)
-        if(Math.random() >= 0.5){
-          var star = new Path(starPath1)
-        } else {
-          var star = new Path(starPath2)
+        if(index == directionSteps.length - 1){
+          drawStarAtPoint(step.end.lat(), step.end.lng())
         }
-        star.fillColor = 'black'
-        star.scale(STAR_SCALE)
-        star.rotate(Math.random() * 100)
-        star.position = new Point(item.point.x, item.point.y);
       })
       view.draw();
       // console.log(directionSteps)
+    }
+
+    function drawStarAtPoint(lat, lng){
+      var directionStepWaypoint = new google.maps.LatLng(lat, lng)
+      var pixelStartCoords = latLngControl.updatePosition(directionStepWaypoint)
+      if (Math.random() >= 0.5) {
+        var star = new Path(starPath1)
+      } else {
+        var star = new Path(starPath2)
+      }
+      star.fillColor = 'black'
+      star.scale(STAR_SCALE)
+      star.rotate(Math.random() * 100)
+      star.position = new Point(pixelStartCoords[0], pixelStartCoords[1]);
+
     }
 
     google.maps.event.addDomListener(window, 'load', init);
