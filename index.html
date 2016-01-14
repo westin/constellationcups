@@ -45,6 +45,7 @@
     var map;
     var LatLngControl;
     var directionSteps;
+    var directionConstellationGroup;
 
     var starPath1 =
       "M262.825007,167 L264.540905,168.36331 L266.278803,167.113278 L265.258953,169.026826 L267.017681,170.369305 L264.97927,170.097463 L264.812747,171.927808 L264.021794,169.889397 L262,169.845163 L263.561077,168.830345 L262.825007,167 Z"
@@ -142,6 +143,10 @@
       directionPath.strokeColor = '#999999';
       directionPath.strokeWidth = 2;
       directionPath.dashArray = [2, 5];
+
+      directionConstellationGroup = new Group()
+      directionConstellationGroup.addChild(directionPath)
+
       $(directionSteps).each(function(index, item) {
           for (i = 0; i < item.points.length; i++) {
             var pixelCoords = latLngControl.updatePosition(new google.maps.LatLng(item.points[i][0], item.points[i][1]))
@@ -161,8 +166,8 @@
           drawStarAtPoint(step.end.lat(), step.end.lng())
         }
       })
+      fitConstellationGroup()
       view.draw();
-      // console.log(directionSteps)
     }
 
     function drawStarAtPoint(lat, lng){
@@ -177,8 +182,19 @@
       star.scale(STAR_SCALE)
       star.rotate(Math.random() * 100)
       star.position = new Point(pixelStartCoords[0], pixelStartCoords[1]);
-
+      directionConstellationGroup.addChild(star)
     }
+
+
+    function fitConstellationGroup(){
+      // basic shitty function right now. should be smarter
+      var boundsHeight = directionConstellationGroup.bounds.height
+      var boundsWidth = directionConstellationGroup.bounds.width
+      if(boundsHeight > boundsWidth){
+        directionConstellationGroup.rotate(90)
+      }
+    }
+
 
     google.maps.event.addDomListener(window, 'load', init);
   </script>
