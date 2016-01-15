@@ -1,5 +1,6 @@
 var PERSONS_NAME = ''
 var finalDestination = []
+var FILE = ''
 
 
 function downloadDataUri(options) {
@@ -12,11 +13,72 @@ function onMouseDown(event) {
   var svg = project.exportSVG({
     asString: true
   });
-  downloadDataUri({
-    data: 'data:image/svg+xml;base64,' + btoa(svg),
-    filename: 'export.svg'
-  });
+  // FILE = 'data:image/svg+xml;base64,' + btoa(svg)
+  console.log(svg)
+
+
+
+function timeStamp() {
+// Create a date object with the current time
+  var now = new Date();
+
+// Create an array with the current month, day and time
+  var date = [ now.getMonth() + 1, now.getDate(), now.getFullYear() ];
+
+// Create an array with the current hour, minute and second
+  var time = [ now.getHours(), now.getMinutes()];
+
+// Determine AM or PM suffix based on the hour
+  var suffix = ( time[0] < 12 ) ? "AM" : "PM";
+
+// Convert hour from military time
+  time[0] = ( time[0] < 12 ) ? time[0] : time[0] - 12;
+
+// If hour is 0, set it to 12
+  time[0] = time[0] || 12;
+
+// If seconds and minutes are less than 10, add a zero
+  for ( var i = 1; i < 3; i++ ) {
+    if ( time[i] < 10 ) {
+      time[i] = "0" + time[i];
+    }
+  }
+
+// Return the formatted string
+  return time.join(".") + ' ' + suffix;
 }
+
+
+
+  uploadMedia = function(filename, mdata) {
+		var accesstoken = '1-Lf0XYUe7oAAAAAAAENtLlPWO-A81SrM9JbUBOza3COUER5XTwQdUWL45Hl2lqA'
+      $.ajax({
+        type: 'POST',
+        url: 'https://api-content.dropbox.com/1/files_put/auto/constellation_exports/' + filename,
+        headers: { 'Authorization': 'Bearer ' + accesstoken, 'Content-Type': 'text/plain'},
+        dataType: 'html',
+        processData: false,
+        data: mdata,
+        success: function(data) {
+          alert(data);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          alert("Error when uploading file: " + textStatus + " because:" + errorThrown);
+        }
+      });
+    }
+
+		uploadMedia(timeStamp() + '.svg', svg)
+
+    // downloadDataUri({
+    //   data: 'data:image/svg+xml;base64,' + btoa(svg),
+    //   filename: 'export.svg'
+    // });
+
+
+}
+
+
 
 $(document).ready(function() {
   var $form = $('#container').flickity({
@@ -99,7 +161,7 @@ $(document).ready(function() {
       $("input:radio[name=destination0]").click(function() {
         setTimeout(function() {
           $form.flickity('next');
-					doStep2()
+          doStep2()
         }, 250);
 
       })
@@ -108,31 +170,31 @@ $(document).ready(function() {
   });
 
   function doStep2() {
-      console.log("finished step 2: ")
-      if ($("input:radio[name=destination0]").val() == destinations[0].trueAnswer) {
-        destinations[0].wasChosen = true
-      } else {
-        destinations[0].wasChosen = false
-      }
+    console.log("finished step 2: ")
+    if ($("input:radio[name=destination0]").val() == destinations[0].trueAnswer) {
+      destinations[0].wasChosen = true
+    } else {
+      destinations[0].wasChosen = false
+    }
 
-      $("input:radio[name=destination1]").click(function() {
-        setTimeout(function() {
-          $form.flickity('next');
-					doStep3()
-        }, 250);
-      })
+    $("input:radio[name=destination1]").click(function() {
+      setTimeout(function() {
+        $form.flickity('next');
+        doStep3()
+      }, 250);
+    })
   }
 
-	function doStep3(){
-			console.log("finished step 3")
-			if ($("input:radio[name=destination1]").val() == destinations[1].trueAnswer) {
-				destinations[1].wasChosen = true
-			} else {
-				destinations[1].wasChosen = false
-			}
+  function doStep3() {
+    console.log("finished step 3")
+    if ($("input:radio[name=destination1]").val() == destinations[1].trueAnswer) {
+      destinations[1].wasChosen = true
+    } else {
+      destinations[1].wasChosen = false
+    }
 
-			pickDestination(destinations[0], destinations[1])
-	}
+    pickDestination(destinations[0], destinations[1])
+  }
 
   $("#namefield").keyup(function() {
     $nameform = $("#namefield")
@@ -179,5 +241,5 @@ function pickDestination(opt1, opt2) {
     }
   }
   console.log(PERSONS_NAME + " will be navigating to " + finalDestination.name + " at " + String(finalDestination.lat) + ", " + String(finalDestination.lng))
-	getDirections(directionsService, "40.444359, -79.941564", String(finalDestination.lat) + ", " + String(finalDestination.lng))
+  getDirections(directionsService, "40.444359, -79.941564", String(finalDestination.lat) + ", " + String(finalDestination.lng))
 }
