@@ -673,10 +673,10 @@
     function drawStarAtPoint(x, y, index) {
       console.log(index)
       if (index == 100) {
-        project.importSVG("svgs/compass.svg", function(item) {
+        project.importSVG("svgs/linedstar.svg", function(item) {
           // console.log(item);
           item.position = new Point(x, y);
-          item.scale(0.45)
+          item.scale(0.6)
         });
       }
       if (index == 1) {
@@ -695,7 +695,7 @@
           var star = new Path(starPath4)
         }
         star.strokeColor = 'black'
-        star.scale(0.3)
+        star.scale(0.45)
         star.rotate(Math.random() * 360)
         star.position = new Point(x, y);
         // starGroup.addChild(star)
@@ -727,7 +727,8 @@
 
           var index = 0;
 
-          var words = s;
+          // var words = s;
+          var words = s.split(' ');
 
           var temp_words = new Array();
 
@@ -846,13 +847,21 @@
           //   fontFamily: 'Helvetica'
           // })
 
-        var stepNumber = write(String(stepIndex), givenX, givenY, 0.6)
+          var dist = STEP_NUMBER_DIST
+        if(stepIndex == 1){
+          var stepNumber = write("start", givenX, givenY, 1)
+          stepNumber.scale(0.6)
+          dist += 3
+
+        } else {
+          dist += (Math.random() * 5)
+            var stepNumber = write(String(stepIndex), givenX, givenY, 0.6)
+        }
 
         // stepNumber.fontFamily = 'machine_script'
         // stepNumber.justification = 'center'
         // stepNumber.fillColor = 'black'
         // stepNumber.content = stepIndex
-        var dist = STEP_NUMBER_DIST
         var pointPossibilities = [
           new Point(givenX, givenY - dist),
           new Point(givenX + (dist / 2), givenY - dist),
@@ -1095,7 +1104,7 @@
               //   console.log(landmarkGroup.children[i])
               // }
             if (landmarkText.intersects(directionPath)) {
-              landmarkText.position.x -= (landmarkText.bounds.width)
+              landmarkText.position.x -= (landmarkText.bounds.width - 5)
               if (landmarkText.intersects(directionPath)) {
                 landmarkText.remove()
                 landmark.remove()
@@ -1285,12 +1294,12 @@
           return directionsGroup;
         }
 
-        var directionListBounding = new Shape.Rectangle(new Point(720, 50), new Point(1150, 400))
+        var directionListBounding = new Shape.Rectangle(new Point(720, 50), new Point(1150, 350))
         directionListBounding.fillColor = 'rgba(17, 17, 17, 0.1)'
 
         var directionList = writeDirections(directionSteps, 800, 223, 1)
         directionList.fitBounds(directionListBounding.bounds)
-        directionList.scale(0.9)
+        // directionList.scale(0.9)
         directionList.position.y = directionList.bounds.height / 2 + 80
 
 
@@ -1307,6 +1316,9 @@
         project.importSVG("svgs/logo.svg", function(item) {
           // console.log(item);
           item.position = new Point(950, 370);
+          if(item.intersects(directionList)){
+            item.remove()
+          }
           // item.scale(0.8)
         });
 

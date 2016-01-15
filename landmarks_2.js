@@ -1,5 +1,5 @@
 var landmarks = [{
-  name: "Cathedral of learning",
+  name: "Cathedral of Learning",
   lat: 40.444279,
   lng: -79.953263
 }, {
@@ -23,11 +23,11 @@ var landmarks = [{
   lat: 40.438977,
   lng: -79.947742
 }, {
-  name: "Carnegie Museums of Pittsburgh",
+  name: "Carnegie Museum",
   lat: 40.443290,
   lng: -79.950152
 }, {
-  name: "Carnegie Library Sq. Hill",
+  name: "Carnegie Library",
   lat: 40.438361,
   lng: -79.922636
 }, {
@@ -43,11 +43,11 @@ var landmarks = [{
   lat: 40.447231,
   lng: -79.949764
 }, {
-  name: "Soldiers & Sailors Memorial ",
+  name: "Soldiers and Sailors",
   lat: 40.444846,
   lng: -79.956198
 }, {
-  name: "Golf Course at Schenley Park",
+  name: "Schenley Park",
   lat: 40.437890,
   lng: -79.938214
 }, {
@@ -63,7 +63,7 @@ var landmarks = [{
   lat: 40.447634,
   lng: -79.924294
 }, {
-  name: "Oakland Catholic High School",
+  name: "Oakland Catholic HS",
   lat: 40.449142,
   lng: -79.949923
 }, {
@@ -103,7 +103,7 @@ var landmarks = [{
   lat: 40.453158,
   lng: -79.902918
 }, {
-  name: "UPMC Hospital Shadyside",
+  name: "UPMC Hospital",
   lat: 40.454083,
   lng: -79.939529
 }, {
