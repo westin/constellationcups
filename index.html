@@ -295,11 +295,12 @@
     animation: smokeFade 4.5s ease infinite;
   }
 
-
-#answer1, #answer2, #answer3, #answer4 {
-  margin-bottom: 7px;
-}
-
+  #answer1,
+  #answer2,
+  #answer3,
+  #answer4 {
+    margin-bottom: 7px;
+  }
 </style>
 
 <body>
@@ -324,13 +325,13 @@
       <br>
       <div class="radio-answers clearfix">
         <div id="answer1">
-        <input type="radio" id="radio1" name="destination0" value="true">
-        <label for="radio1">You just get me sometimes.</label>
-      </div>
+          <input type="radio" id="radio1" name="destination0" value="true">
+          <label for="radio1">You just get me sometimes.</label>
+        </div>
 
         <div id="answer2">
-        <input type="radio" id="radio2" name="destination0" value="false">
-        <label for="radio2">How could I? Birds dress me in the morning.</label>
+          <input type="radio" id="radio2" name="destination0" value="false">
+          <label for="radio2">How could I? Birds dress me in the morning.</label>
         </div>
       </div>
     </div>
@@ -341,13 +342,13 @@
       <br>
       <div class="radio-answers clearfix">
         <div id="answer3">
-        <input type="radio" id="radio3" name="destination1" value="true">
-        <label for="radio3">You just get me sometimes.</label>
+          <input type="radio" id="radio3" name="destination1" value="true">
+          <label for="radio3">You just get me sometimes.</label>
         </div>
 
         <div id="answer4">
-        <input type="radio" id="radio4" name="destination1" value="false">
-        <label for="radio4">How could I? Birds dress me in the morning.</label>
+          <input type="radio" id="radio4" name="destination1" value="false">
+          <label for="radio4">How could I? Birds dress me in the morning.</label>
         </div>
       </div>
     </div>
@@ -407,6 +408,13 @@
       "M262.825007,167 L264.540905,168.36331 L266.278803,167.113278 L265.258953,169.026826 L267.017681,170.369305 L264.97927,170.097463 L264.812747,171.927808 L264.021794,169.889397 L262,169.845163 L263.561077,168.830345 L262.825007,167 Z"
     var starPath2 =
       "M249.13078,166 L251.080893,168.870331 L253.836463,167.733216 L251.98488,170.002364 L253.767115,172.276759 L251.206474,171.274241 L250.45184,173.864064 L249.974271,170.847987 L247,170.889957 L249.865085,169.402821 L249.13078,166 Z"
+    var starPath3 =
+      "M89.5,197.9 L83.4,211.8 L72,211.8 L79,221.6 L72,252.6 L88.9,227.1 L100.4,239.5 L98,221.6 L107,211.8 L96,211.8 L89.5,197.9 Z"
+    var starPath4 =
+      "M81.5,61 L75.4,72.7 L65,74.1 L73.4,81.1 L71.1,94.1 L82.4,85.1 L93.8,94.1 L90.3,80.1 L99.7,73.1 L87,71.7 L81.5,61"
+
+    var startStarPath =
+      "M21,0.3 L15.3,13.8 L0.3,13.3 L10.6,24.6 L5,40.1 L19.8,31.6 L35.1,41.1 L29.8,26.6 L41.6,14.1 L26.3,14.8 L21,0.3 Z"
 
     function LatLngControl(map) {
       this.setMap(map);
@@ -436,6 +444,7 @@
       latLngControl = new LatLngControl(map);
 
       console.log("we made it")
+      // getDirections(directionsService, "40.444359, -79.941564", "40.457683, -79.965824")
         // getDirections(directionsService, "40.444359, -79.941564", "40.441581, -79.952815");
     }
 
@@ -532,14 +541,14 @@
             console.log(directionSteps[index].instructions)
             var directionStepWaypoint = new google.maps.LatLng(step.start.lat(), step.start.lng())
             var pixelStartCoords = latLngControl.updatePosition(directionStepWaypoint)
-            drawStarAtPoint(pixelStartCoords[0], pixelStartCoords[1])
+            drawStarAtPoint(pixelStartCoords[0], pixelStartCoords[1], index)
             drawStepNumbers(directionCount, pixelStartCoords[0], pixelStartCoords[1])
             directionCount += 1;
           }
           if (index == directionSteps.length - 1) {
             var directionStepWaypoint = new google.maps.LatLng(step.end.lat(), step.end.lng())
             var pixelEndCoords = latLngControl.updatePosition(directionStepWaypoint)
-            drawStarAtPoint(pixelEndCoords[0], pixelEndCoords[1])
+            drawStarAtPoint(pixelEndCoords[0], pixelEndCoords[1], 100)
           }
         })
         // fitConstellationGroup()
@@ -548,19 +557,40 @@
         // console.log(directionSteps)
     }
 
-    function drawStarAtPoint(x, y) {
-      if (Math.random() >= 0.5) {
-        var star = new Path(starPath1)
-      } else {
-        var star = new Path(starPath2)
+    function drawStarAtPoint(x, y, index) {
+      console.log(index)
+      if (index == 100) {
+        project.importSVG("/svgs/compass.svg", function(item) {
+          console.log(item);
+          item.position = new Point(x, y);
+          item.scale(0.45)
+        });
       }
-      star.fillColor = 'black'
-      star.scale(STAR_SCALE)
-      star.rotate(Math.random() * 100)
-      star.position = new Point(x, y);
-      // starGroup.addChild(star)
-      directionConstellationGroup.addChild(star)
-      starGroup.addChild(star)
+      if (index == 1) {
+        project.importSVG("/svgs/linedstar.svg", function(item) {
+          console.log(item);
+          item.position = new Point(x, y);
+          item.scale(0.5)
+        });
+
+        // star.removeChildren()
+      } else {
+        if (Math.random() >= 0.5) {
+          var star = new Path(starPath4)
+        } else {
+          var star = new Path(starPath4)
+        }
+        star.strokeColor = 'black'
+        star.scale(0.3)
+        star.rotate(Math.random() * 360)
+        star.position = new Point(x, y);
+        // starGroup.addChild(star)
+        directionConstellationGroup.addChild(star)
+        starGroup.addChild(star)
+      }
+
+
+
     }
 
     function drawStepNumbers(stepIndex, x, y) {
@@ -603,13 +633,36 @@
           // console.log(latlng.lat(), latlng.lng())
         if (map.getBounds().contains(latlng) == true) {
           var landmarkPixelCords = latLngControl.updatePosition(latlng)
-          landmarksInBounds.push(landmarkPixelCords)
+          landmarksInBounds.push({cords: landmarkPixelCords, name: landmarks[i].name})
             // var waypoint = new Shape.Circle(new Point(landmarkPixelCords[0], landmarkPixelCords[1]), 5);
             // waypoint.strokeColor = 'black';
 
         }
       }
       var placedLandmarkCount = 0;
+
+      function shuffle(array) {
+        var currentIndex = array.length,
+          temporaryValue, randomIndex;
+
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+
+          // Pick a remaining element...
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+
+          // And swap it with the current element.
+          temporaryValue = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temporaryValue;
+        }
+
+        return array;
+      }
+
+      landmarksInBounds = shuffle(landmarksInBounds)
+
       for (i = 0; i < landmarksInBounds.length; i++) {
         var isTooClose = false
           // var cloneDirectionPath = directionPath.clone({
@@ -618,7 +671,7 @@
           // cloneDirectionPath.flatten(50)
           // console.log(cloneDirectionPath.segments[0].point)
         for (j = 0; j < directionPath.segments.length; j++) {
-          var landmarkPoint = new Point(landmarksInBounds[i][0], landmarksInBounds[i][1])
+          var landmarkPoint = new Point(landmarksInBounds[i].cords[0], landmarksInBounds[i].cords[1])
           var starPoint = directionPath.segments[j].point
           var distPath = new Path.Line(landmarkPoint, starPoint)
           if (distPath.length < LANDMARK_MIN_DISTANCE) {
@@ -628,8 +681,16 @@
           distPath.remove()
         }
         if (isTooClose == false && placedLandmarkCount < 3) {
-          var landmark = new Shape.Circle(landmarkPoint, 5)
-          landmark.strokeColor = 'black'
+          var landmark = new Path(starPath1)
+          landmark.scale(2)
+          landmark.rotate(Math.random() * 360)
+          landmark.position = new Point(landmarkPoint)
+          landmark.fillColor = 'black'
+          var landmarkText = new PointText(landmarkPoint.x + 5, landmarkPoint.y+10)
+          landmarkText.content = landmarksInBounds[i].name
+          landmarkText.fillColor = 'black'
+          landmarkText.fontSize = '9'
+          landmarkText.justification = 'left'
           placedLandmarkCount += 1
         }
       }
