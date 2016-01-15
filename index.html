@@ -391,7 +391,7 @@
     var STAR_MAX_DISTANCE = 5;
     var STAR_SCALE = 2;
     var STEP_NUMBER_DIST = 15;
-    var LANDMARK_MIN_DISTANCE = 50;
+    var LANDMARK_MIN_DISTANCE = 60;
     var LANDMARK_MAX_DISTANCE = 800;
 
 
@@ -560,21 +560,22 @@
     function drawStarAtPoint(x, y, index) {
       console.log(index)
       if (index == 100) {
-        project.importSVG("/svgs/compass.svg", function(item) {
+        project.importSVG("/svgs/filled_star.svg", function(item) {
           console.log(item);
           item.position = new Point(x, y);
-          item.scale(0.45)
+          item.scale(0.8)
         });
       }
       if (index == 1) {
-        project.importSVG("/svgs/linedstar.svg", function(item) {
+        project.importSVG("/svgs/empty_star.svg", function(item) {
           console.log(item);
           item.position = new Point(x, y);
           item.scale(0.5)
         });
 
         // star.removeChildren()
-      } else {
+      }
+      if (index < 100 && index > 1) {
         if (Math.random() >= 0.5) {
           var star = new Path(starPath4)
         } else {
@@ -593,122 +594,408 @@
 
     }
 
-    function drawStepNumbers(stepIndex, x, y) {
-      var step = directionSteps[stepIndex]
-      var stepNumberPoint = new Point(x, y)
-      var stepNumber = new PointText(stepNumberPoint)
-      var stepNumber = new PointText({
-        point: stepNumberPoint,
-        content: stepIndex,
-        justification: 'center',
-        fillColor: 'black',
-        fontFamily: 'Helvetica'
-      })
+    function drawStepNumbers(stepIndex, givenX, givenY) {
+      $.getJSON('hersheytext/hersheytext.min.json', function(fonts) {
 
-      // stepNumber.fontFamily = 'machine_script'
-      // stepNumber.justification = 'center'
-      // stepNumber.fillColor = 'black'
-      // stepNumber.content = stepIndex
-      var dist = STEP_NUMBER_DIST
-      var pointPossibilities = [
-        new Point(x, y - dist),
-        new Point(x + (dist / 2), y - dist),
-        new Point(x + dist, y),
-        new Point(x + dist, y + (dist / 2)),
-        new Point(x, y + dist),
-        new Point(x - (dist / 2), y + dist),
-        new Point(x - dist, y),
-        new Point(x - dist, y - (dist / 2))
-      ]
-      while (stepNumber.intersects(directionPath)) {
-        var newStepNumberPoint = pointPossibilities[Math.floor(Math.random() * pointPossibilities.length)];
-        stepNumber.position = newStepNumberPoint
-      }
-      directionConstellationGroup.addChild(stepNumber)
-    }
+          // var path = new paper.Path(fonts[font].chars[56].d);
+          // path.strokeColor = 'black';
+          // path.Fill
+          // path.position.x += 100;
 
-    function drawLandmarks() {
-      for (i = 0; i < landmarks.length; i++) {
-        var latlng = new google.maps.LatLng(landmarks[i].lat, landmarks[i].lng)
-          // console.log(latlng.lat(), latlng.lng())
-        if (map.getBounds().contains(latlng) == true) {
-          var landmarkPixelCords = latLngControl.updatePosition(latlng)
-          landmarksInBounds.push({cords: landmarkPixelCords, name: landmarks[i].name})
-            // var waypoint = new Shape.Circle(new Point(landmarkPixelCords[0], landmarkPixelCords[1]), 5);
-            // waypoint.strokeColor = 'black';
+          // path.strokeWidth = 1;
 
-        }
-      }
-      var placedLandmarkCount = 0;
 
-      function shuffle(array) {
-        var currentIndex = array.length,
-          temporaryValue, randomIndex;
 
-        // While there remain elements to shuffle...
-        while (0 !== currentIndex) {
+          function write(s, x, y, scale) {
 
-          // Pick a remaining element...
-          randomIndex = Math.floor(Math.random() * currentIndex);
-          currentIndex -= 1;
+            var pathGroup = new paper.Group({});
 
-          // And swap it with the current element.
-          temporaryValue = array[currentIndex];
-          array[currentIndex] = array[randomIndex];
-          array[randomIndex] = temporaryValue;
-        }
+            var start = 0;
 
-        return array;
-      }
+            var index = 0;
 
-      landmarksInBounds = shuffle(landmarksInBounds)
+            var words = s;
 
-      for (i = 0; i < landmarksInBounds.length; i++) {
-        var isTooClose = false
-          // var cloneDirectionPath = directionPath.clone({
-          //   insert: false
-          // })
-          // cloneDirectionPath.flatten(50)
-          // console.log(cloneDirectionPath.segments[0].point)
-        for (j = 0; j < directionPath.segments.length; j++) {
-          var landmarkPoint = new Point(landmarksInBounds[i].cords[0], landmarksInBounds[i].cords[1])
-          var starPoint = directionPath.segments[j].point
-          var distPath = new Path.Line(landmarkPoint, starPoint)
-          if (distPath.length < LANDMARK_MIN_DISTANCE) {
-            // || distPath.length > LANDMARK_MAX_DISTANCE
-            isTooClose = true
+            var temp_words = new Array();
+
+            for (var w in words) {
+              word = words[w];
+              if (word.indexOf("'") != -1 && word.length > 1) {
+                word = word.split(/(?=('))/)
+                word[2] = word[2].substr(1)
+                temp_words = temp_words.concat(word)
+              } else if (word.indexOf(".") != -1 && word.length > 1) {
+                word = word.split(/(?=(\.))/)
+                word.pop()
+                temp_words = temp_words.concat(word)
+              } else {
+                temp_words.push(word)
+              }
+            }
+
+            words = temp_words;
+
+            for (var w in words) {
+              var word = words[w];
+              var wordPath;
+
+              // Move through each letter
+              // int offset =
+              for (var i in word) {
+                index = word.charCodeAt(i) - 33;
+
+                if (index >= 16 && index <= 24) {
+                  font = "futural"
+                } else {
+                  font = "scripts"
+                }
+
+                var path = new paper.Path(fonts[font].chars[index].d);
+
+                path.strokeColor = 'black';
+                path.strokeWidth = 1;
+
+                if (index != 6 && index != 13) {
+                  start += 9 + fonts[font].chars[index].o;
+                }
+
+                path.position.x = start;
+
+                path.Fill
+                if (index == 83) {
+                  path.position.x = start - 3;
+                  var path2Data = 'M1,9 L8,9';
+                  var path2 = new paper.Path(path2Data);
+                  path2.position = new paper.Point(path.position.x - 2, path.position.y - 3)
+                  path2.strokeColor = 'black';
+                  path2.strokeWidth = 1;
+                  pathGroup.addChild(path2);
+                } else if (index == 72) {
+                  var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
+                  var path2 = new paper.Path(path2Data);
+                  path2.position = new paper.Point(path.position.x, path.position.y - 12)
+                  path2.strokeColor = 'black';
+                  path2.strokeWidth = 1;
+                  pathGroup.addChild(path2);
+                } else if (index == 73) {
+                  var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
+                  var path2 = new paper.Path(path2Data);
+                  path2.position = new paper.Point(path.position.x + 3, path.position.y - 18)
+                  path2.strokeColor = 'black';
+                  path2.strokeWidth = 1;
+                  pathGroup.addChild(path2);
+                }
+
+                if (i == 0) {
+                  wordPath = path;
+                } else {
+                  wordPath.join(path);
+                }
+
+              }
+
+              if (index != 6 && index != 13) {
+                start += 8;
+              }
+
+              if ((index <= 16 || index >= 24) && (word.indexOf("pp") == -1)) {
+                wordPath.simplify();
+              }
+
+              pathGroup.addChild(wordPath);
+
+            }
+
+            pathGroup.position = new paper.Point(x, y);
+            pathGroup.scale(scale);
+
+            return pathGroup;
           }
-          distPath.remove()
-        }
-        if (isTooClose == false && placedLandmarkCount < 3) {
-          var landmark = new Path(starPath1)
-          landmark.scale(2)
-          landmark.rotate(Math.random() * 360)
-          landmark.position = new Point(landmarkPoint)
-          landmark.fillColor = 'black'
-          var landmarkText = new PointText(landmarkPoint.x + 5, landmarkPoint.y+10)
-          landmarkText.content = landmarksInBounds[i].name
-          landmarkText.fillColor = 'black'
-          landmarkText.fontSize = '9'
-          landmarkText.justification = 'left'
-          placedLandmarkCount += 1
+
+
+
+          var step = directionSteps[stepIndex]
+            var stepNumberPoint = new Point(givenX, givenY)
+            // var stepNumber = new PointText(stepNumberPoint)
+            // var stepNumber = new PointText({
+            //   point: stepNumberPoint,
+            //   content: stepIndex,
+            //   justification: 'center',
+            //   fillColor: 'black',
+            //   fontFamily: 'Helvetica'
+            // })
+
+          var stepNumber = write(String(stepIndex), givenX, givenY, 0.4)
+
+          // stepNumber.fontFamily = 'machine_script'
+          // stepNumber.justification = 'center'
+          // stepNumber.fillColor = 'black'
+          // stepNumber.content = stepIndex
+          var dist = STEP_NUMBER_DIST
+          var pointPossibilities = [
+            new Point(givenX, givenY - dist),
+            new Point(givenX + (dist / 2), givenY - dist),
+            new Point(givenX + dist, givenY),
+            new Point(givenX + dist, givenY + (dist / 2)),
+            new Point(givenX, givenY + dist),
+            new Point(givenX - (dist / 2), givenY + dist),
+            new Point(givenX - dist, givenY),
+            new Point(givenX - dist, givenY - (dist / 2))
+          ]
+          while (stepNumber.intersects(directionPath) || stepNumber.intersects(directionConstellationGroup)) {
+            var newStepNumberPoint = pointPossibilities[Math.floor(Math.random() * pointPossibilities.length)];
+            stepNumber.position = newStepNumberPoint
+          }
+          directionConstellationGroup.addChild(stepNumber)
+
+
+
+
+
+
+        })
+      }
+
+
+
+
+
+
+
+
+
+      function drawLandmarks() {
+
+        $.getJSON('hersheytext/hersheytext.min.json', function(fonts) {
+
+          // var path = new paper.Path(fonts[font].chars[56].d);
+          // path.strokeColor = 'black';
+          // path.Fill
+          // path.position.x += 100;
+
+          // path.strokeWidth = 1;
+
+
+
+          function write(s, x, y, scale) {
+
+            var pathGroup = new paper.Group({});
+
+            var start = 0;
+
+            var index = 0;
+
+            var words = s.split(' ');
+
+            var temp_words = new Array();
+
+            for (var w in words) {
+              word = words[w];
+              if (word.indexOf("'") != -1 && word.length > 1) {
+                word = word.split(/(?=('))/)
+                word[2] = word[2].substr(1)
+                temp_words = temp_words.concat(word)
+              } else if (word.indexOf(".") != -1 && word.length > 1) {
+                word = word.split(/(?=(\.))/)
+                word.pop()
+                temp_words = temp_words.concat(word)
+              } else {
+                temp_words.push(word)
+              }
+            }
+
+            words = temp_words;
+
+            for (var w in words) {
+              var word = words[w];
+              var wordPath;
+
+              // Move through each letter
+              // int offset =
+              for (var i in word) {
+                index = word.charCodeAt(i) - 33;
+
+                if (index >= 16 && index <= 24) {
+                  font = "futural"
+                } else {
+                  font = "scripts"
+                }
+
+                var path = new paper.Path(fonts[font].chars[index].d);
+
+                path.strokeColor = 'black';
+                path.strokeWidth = 1;
+
+                if (index != 6 && index != 13) {
+                  start += 9 + fonts[font].chars[index].o;
+                }
+
+                path.position.x = start;
+
+                path.Fill
+                if (index == 83) {
+                  path.position.x = start - 3;
+                  var path2Data = 'M1,9 L8,9';
+                  var path2 = new paper.Path(path2Data);
+                  path2.position = new paper.Point(path.position.x - 2, path.position.y - 3)
+                  path2.strokeColor = 'black';
+                  path2.strokeWidth = 1;
+                  pathGroup.addChild(path2);
+                } else if (index == 72) {
+                  var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
+                  var path2 = new paper.Path(path2Data);
+                  path2.position = new paper.Point(path.position.x, path.position.y - 12)
+                  path2.strokeColor = 'black';
+                  path2.strokeWidth = 1;
+                  pathGroup.addChild(path2);
+                } else if (index == 73) {
+                  var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
+                  var path2 = new paper.Path(path2Data);
+                  path2.position = new paper.Point(path.position.x + 3, path.position.y - 18)
+                  path2.strokeColor = 'black';
+                  path2.strokeWidth = 1;
+                  pathGroup.addChild(path2);
+                }
+
+                if (i == 0) {
+                  wordPath = path;
+                } else {
+                  wordPath.join(path);
+                }
+
+              }
+
+              if (index != 6 && index != 13) {
+                start += 8;
+              }
+
+              if ((index <= 16 || index >= 24) && (word.indexOf("pp") == -1)) {
+                wordPath.simplify();
+              }
+
+              pathGroup.addChild(wordPath);
+
+            }
+
+            pathGroup.position = new paper.Point(x, y);
+            pathGroup.scale(scale);
+
+            return pathGroup;
+          }
+
+
+          for (i = 0; i < landmarks.length; i++) {
+            var latlng = new google.maps.LatLng(landmarks[i].lat, landmarks[i].lng)
+              // console.log(latlng.lat(), latlng.lng())
+            if (map.getBounds().contains(latlng) == true) {
+              var landmarkPixelCords = latLngControl.updatePosition(latlng)
+              landmarksInBounds.push({
+                  cords: landmarkPixelCords,
+                  name: landmarks[i].name
+                })
+                // var waypoint = new Shape.Circle(new Point(landmarkPixelCords[0], landmarkPixelCords[1]), 5);
+                // waypoint.strokeColor = 'black';
+
+            }
+          }
+          var placedLandmarkCount = 0;
+
+          function shuffle(array) {
+            var currentIndex = array.length,
+              temporaryValue, randomIndex;
+
+            // While there remain elements to shuffle...
+            while (0 !== currentIndex) {
+
+              // Pick a remaining element...
+              randomIndex = Math.floor(Math.random() * currentIndex);
+              currentIndex -= 1;
+
+              // And swap it with the current element.
+              temporaryValue = array[currentIndex];
+              array[currentIndex] = array[randomIndex];
+              array[randomIndex] = temporaryValue;
+            }
+
+            return array;
+          }
+
+          landmarksInBounds = shuffle(landmarksInBounds)
+
+          for (i = 0; i < landmarksInBounds.length; i++) {
+            var isTooClose = false
+              // var cloneDirectionPath = directionPath.clone({
+              //   insert: false
+              // })
+              // cloneDirectionPath.flatten(50)
+              // console.log(cloneDirectionPath.segments[0].point)
+            for (j = 0; j < directionPath.segments.length; j++) {
+              var landmarkPoint = new Point(landmarksInBounds[i].cords[0], landmarksInBounds[i].cords[1])
+              var starPoint = directionPath.segments[j].point
+              var distPath = new Path.Line(landmarkPoint, starPoint)
+              if (distPath.length < LANDMARK_MIN_DISTANCE) {
+                // || distPath.length > LANDMARK_MAX_DISTANCE
+                isTooClose = true
+              }
+              distPath.remove()
+            }
+            if (isTooClose == false && placedLandmarkCount < 3) {
+              var landmark = new Path(starPath1)
+              landmark.scale(2)
+              landmark.rotate(Math.random() * 360)
+              landmark.position = new Point(landmarkPoint)
+              landmark.fillColor = 'black'
+                // var landmarkText = new PointText(landmarkPoint.x + 5, landmarkPoint.y + 10)
+                // landmarkText.content = landmarksInBounds[i].name
+                // landmarkText.fillColor = 'black'
+                // landmarkText.fontSize = '9'
+                // landmarkText.justification = 'left'
+
+              var landmarkText = write(landmarksInBounds[i].name, landmarkPoint.x + 5, landmarkPoint.y + 10, 0.4)
+              landmarkText.position.x += (landmarkText.bounds.width / 2)
+              if (landmarkText.intersects(directionPath)) {
+                landmarkText.position.x -= (landmarkText.bounds.width)
+                if (landmarkText.intersects(directionPath)) {
+                  landmarkText.remove()
+                  landmark.remove
+                  placedLandmarkCount -= 1
+                }
+              }
+              paper.view.draw();
+              placedLandmarkCount += 1
+            }
+          }
+
+
+
+
+
+
+
+
+        });
+
+      }
+
+
+
+
+
+
+
+
+
+      function fitConstellationGroup() {
+        // basic shitty function right now. should be smarter
+        var boundsHeight = directionConstellationGroup.bounds.height
+        var boundsWidth = directionConstellationGroup.bounds.width
+        if (boundsHeight > boundsWidth) {
+          directionConstellationGroup.rotate(90)
         }
       }
 
-    }
 
-
-    function fitConstellationGroup() {
-      // basic shitty function right now. should be smarter
-      var boundsHeight = directionConstellationGroup.bounds.height
-      var boundsWidth = directionConstellationGroup.bounds.width
-      if (boundsHeight > boundsWidth) {
-        directionConstellationGroup.rotate(90)
-      }
-    }
-
-
-    google.maps.event.addDomListener(window, 'load', init);
+      google.maps.event.addDomListener(window, 'load', init);
   </script>
 
 
