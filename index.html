@@ -849,7 +849,7 @@
 
           var dist = STEP_NUMBER_DIST
         if(stepIndex == 1){
-          var stepNumber = write("start", givenX, givenY, 1)
+          var stepNumber = write("1. Start", givenX, givenY, 1)
           stepNumber.scale(0.6)
           dist += 3
 
@@ -1308,6 +1308,9 @@
         nameTitle.fitBounds(directionListBounding.bounds)
         nameTitle.scale(0.7)
         nameTitle.position = new Point(925, 50)
+        nameUnderline = new Path(new Point(nameTitle.bounds.x, 65), new Point(nameTitle.bounds.x + nameTitle.bounds.width, 65))
+        nameUnderline.strokeColor = "black"
+        nameUnderline.strokeWidth = 1
 
         directionListBounding.remove()
 
