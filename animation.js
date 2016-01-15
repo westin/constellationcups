@@ -202,6 +202,11 @@ $(document).ready(function() {
     }
 
     pickDestination(destinations[0], destinations[1])
+
+		setTimeout(function(){
+    $("#step4 span").text("Tap the coffee icon to begin!")
+}, 5000);
+
   }
 
   $("#namefield").keyup(function() {

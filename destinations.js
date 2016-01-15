@@ -79,14 +79,6 @@ var destinations = [{
   trueAnswer: "I only drink IPAs",
   falseAnswer: "No"
 }, {
-  name: "Avalon Exchange",
-  lat: 40.437900,
-  lng: -79.920386,
-  description: "Second hand clothes",
-  question: "Is that your grandma's coat?",
-  trueAnswer: "It was 99 cents",
-  falseAnswer: "No"
-}, {
   name: "Girasole",
   lat: 40.451112,
   lng: -79.934077,
@@ -207,12 +199,12 @@ var destinations = [{
   trueAnswer: "Everyone's trash is my treasure.",
   falseAnswer: "No I only like shiny things."
 }, {
-  name: "Sphinx Café",
+  name: "Sphinx Cafe",
   lat: 40.438091,
   lng: -79.953672,
   description: "Church turned hookah bar",
   question: "Fumas la cachimba?",
-  trueAnswer: "Sí",
+  trueAnswer: "Si",
   falseAnswer: "Qué"
 }, {
   name: "The Church Brew Works",

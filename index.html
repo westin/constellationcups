@@ -246,18 +246,22 @@
 
   #step4 span {
     /*display: none;*/
-    float: left;
-    font-weight: 500;
-    font-size: 25px;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    /*color: white*/
-    /*display: block;*/
-    /*text-align: center;*/
-    background: -webkit-linear-gradient(#fff 10%, rgba(74, 144, 226, 1) 75%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: white;
+    margin-bottom: 20px;
   }
+
+
+  /*float: left;
+  font-weight: 500;
+  font-size: 25px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: white
+  display: block;
+  text-align: center;
+  background: -webkit-linear-gradient(#fff 10%, rgba(74, 144, 226, 1) 75%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;*/
 
   #step4 img {
     /*display: none;*/
@@ -363,6 +367,7 @@
       </div>
     </div>
     <div id="step4">
+      <span>Your coffee will be ready soon &#x1f60A</span>
       <svg width="61px" height="66px" viewBox="0 0 61 66" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
         <title>coffee</title>
         <desc>brewin</desc>
@@ -385,7 +390,6 @@
         </g>
       </svg>
       <img src="http://m00n.org/customconstellationcups/img/white_constellation_logo.png">
-      <!-- <span>Your coffee is being made</span> -->
     </div>
   </div>
 
@@ -503,6 +507,10 @@
           } else {
             var toward = false;
           }
+
+          if (item.instructions.indexOf('Destination') != -1){
+            item.instructions = item.instructions.slice(0, item.instructions.indexOf('Destination'));
+          }
           var step = {
             step: index + 1,
             instructions: strip(item.instructions),
@@ -536,7 +544,7 @@
         });
       }
       // FILE = 'data:image/svg+xml;base64,' + btoa(svg)
-      console.log(svg)
+      // console.log(svg)
 
 
 
@@ -665,10 +673,10 @@
     function drawStarAtPoint(x, y, index) {
       console.log(index)
       if (index == 100) {
-        project.importSVG("/svgs/filled_star.svg", function(item) {
+        project.importSVG("/svgs/compass.svg", function(item) {
           // console.log(item);
           item.position = new Point(x, y);
-          item.scale(0.8)
+          item.scale(0.45)
         });
       }
       if (index == 1) {
@@ -1260,7 +1268,7 @@
             direction = directions[i]["instructions"];
             if (directions[i].isToward == false) {
               i++;
-              console.log(directions[i - 1])
+              // console.log(directions[i - 1])
               directionGroup = write(curStep + ". " + direction, 50, 50 * curStep, 1);
               curStep += 1;
               i--;
