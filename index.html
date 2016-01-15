@@ -43,8 +43,8 @@
   }
 
   #map {
-    height: 400px;
-    width: 800px;
+    height: 447px;
+    width: 600px;
     visibility: hidden;
     /*display: none;*/
   }
@@ -52,8 +52,8 @@
   canvas {
     margin: 0 auto 0 auto;
     background: #f9f1f1;
-    height: 400px;
-    width: 800px;
+    height: 447px;
+    width: 1200px;
     /*display: none;*/
   }
 
@@ -444,7 +444,7 @@
       latLngControl = new LatLngControl(map);
 
       console.log("we made it")
-      // getDirections(directionsService, "40.444359, -79.941564", "40.457683, -79.965824")
+      getDirections(directionsService, "40.444359, -79.941564", "40.457683, -79.965824")
         // getDirections(directionsService, "40.444359, -79.941564", "40.441581, -79.952815");
     }
 
@@ -561,14 +561,14 @@
       console.log(index)
       if (index == 100) {
         project.importSVG("/svgs/filled_star.svg", function(item) {
-          console.log(item);
+          // console.log(item);
           item.position = new Point(x, y);
           item.scale(0.8)
         });
       }
       if (index == 1) {
         project.importSVG("/svgs/empty_star.svg", function(item) {
-          console.log(item);
+          // console.log(item);
           item.position = new Point(x, y);
           item.scale(0.5)
         });
@@ -922,6 +922,12 @@
 
           landmarksInBounds = shuffle(landmarksInBounds)
 
+          var directionListBounding = new Shape.Rectangle(new Point(0, 447), new Point(1200, 380))
+          directionListBounding.fillColor = 'rgba(17, 17, 17, 0.1)'
+
+          var directionListBounding2 = new Shape.Rectangle(new Point(700, 0), new Point(1200, 447))
+          directionListBounding2.fillColor = 'rgba(17, 17, 17, 0.1)'
+
           for (i = 0; i < landmarksInBounds.length; i++) {
             var isTooClose = false
               // var cloneDirectionPath = directionPath.clone({
@@ -933,7 +939,7 @@
               var landmarkPoint = new Point(landmarksInBounds[i].cords[0], landmarksInBounds[i].cords[1])
               var starPoint = directionPath.segments[j].point
               var distPath = new Path.Line(landmarkPoint, starPoint)
-              if (distPath.length < LANDMARK_MIN_DISTANCE) {
+              if (distPath.length < LANDMARK_MIN_DISTANCE || directionListBounding.contains(landmarkPoint) == true || directionListBounding2.contains(landmarkPoint) == true){
                 // || distPath.length > LANDMARK_MAX_DISTANCE
                 isTooClose = true
               }
@@ -968,18 +974,170 @@
 
 
 
-
+          directionListBounding.remove()
+          directionListBounding2.remove()
 
 
 
 
         });
-
+        drawDirections()
       }
 
 
 
 
+      function drawDirections(){
+        $.getJSON('hersheytext/hersheytext.min.json', function(fonts) {
+
+          // var path = new paper.Path(fonts[font].chars[56].d);
+          // path.strokeColor = 'black';
+          // path.Fill
+          // path.position.x += 100;
+
+          // path.strokeWidth = 1;
+
+
+
+          function write(s, x, y, scale) {
+
+            var pathGroup = new paper.Group({});
+
+            var start = 0;
+
+            var index = 0;
+
+            var words = s.split(' ');
+
+            var temp_words = new Array();
+
+            for (var w in words) {
+              word = words[w];
+              if (word.indexOf("'") != -1 && word.length > 1) {
+                word = word.split(/(?=('))/)
+                word[2] = word[2].substr(1)
+                temp_words = temp_words.concat(word)
+              } else if (word.indexOf(".") != -1 && word.length > 1) {
+                word = word.split(/(?=(\.))/)
+                word.pop()
+                temp_words = temp_words.concat(word)
+              } else {
+                temp_words.push(word)
+              }
+            }
+
+            words = temp_words;
+
+            for (var w in words) {
+              var word = words[w];
+              var wordPath;
+
+              // Move through each letter
+              // int offset =
+              for (var i in word) {
+                index = word.charCodeAt(i) - 33;
+
+                if (index >= 16 && index <= 24) {
+                  font = "futural"
+                } else {
+                  font = "scripts"
+                }
+
+                var path = new paper.Path(fonts[font].chars[index].d);
+
+                path.strokeColor = 'black';
+                path.strokeWidth = 1;
+
+                if (index != 6 && index != 13) {
+                  start += 9 + fonts[font].chars[index].o;
+                }
+
+                path.position.x = start;
+
+                path.Fill
+                if (index == 83) {
+                  path.position.x = start - 3;
+                  var path2Data = 'M1,9 L8,9';
+                  var path2 = new paper.Path(path2Data);
+                  path2.position = new paper.Point(path.position.x - 2, path.position.y - 3)
+                  path2.strokeColor = 'black';
+                  path2.strokeWidth = 1;
+                  pathGroup.addChild(path2);
+                } else if (index == 72) {
+                  var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
+                  var path2 = new paper.Path(path2Data);
+                  path2.position = new paper.Point(path.position.x, path.position.y - 12)
+                  path2.strokeColor = 'black';
+                  path2.strokeWidth = 1;
+                  pathGroup.addChild(path2);
+                } else if (index == 73) {
+                  var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
+                  var path2 = new paper.Path(path2Data);
+                  path2.position = new paper.Point(path.position.x + 3, path.position.y - 18)
+                  path2.strokeColor = 'black';
+                  path2.strokeWidth = 1;
+                  pathGroup.addChild(path2);
+                }
+
+                if (i == 0) {
+                  wordPath = path;
+                } else {
+                  wordPath.join(path);
+                }
+
+              }
+
+              if (index != 6 && index != 13) {
+                start += 8;
+              }
+
+              if ((index <= 16 || index >= 24) && (word.indexOf("pp") == -1)) {
+                wordPath.simplify();
+              }
+
+              pathGroup.addChild(wordPath);
+
+            }
+
+            pathGroup.position = new paper.Point(x, y);
+            pathGroup.scale(scale);
+
+            return pathGroup;
+          }
+
+          function writeDirections(directions, x, y, scale) {
+            directionsGroup = new paper.Group({});
+            var curStep = 1;
+            for (i in directions) {
+              direction = directions[i]["instructions"];
+              if(directions[i].isToward == false){
+                i++;
+                console.log(directions[i-1])
+                directionGroup = write(curStep + ". " + direction, 50, 50 * curStep, 1);
+                curStep += 1;
+                i--;
+                directionsGroup.addChild(directionGroup);
+              }
+            }
+            directionsGroup.position = new paper.Point(x, y);
+            return directionsGroup;
+          }
+
+          var directionListBounding = new Shape.Rectangle(new Point(700, 50), new Point(1150, 400))
+          directionListBounding.fillColor = 'rgba(17, 17, 17, 0.1)'
+
+          var directionList =  writeDirections(directionSteps, 800, 223, 1)
+          directionList.fitBounds(directionListBounding.bounds)
+          directionList.scale(0.9)
+          directionList.position.y = directionList.bounds.height/2 + 30
+          directionListBounding.remove()
+          paper.view.draw();
+
+
+
+
+        });
+      }
 
 
 
