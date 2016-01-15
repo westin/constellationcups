@@ -9,6 +9,7 @@
   <script type="text/javascript" src="paper-full.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <script type="text/javascript" src="destinations.js"></script>
+  <script type="text/javascript" src="landmarks_2.js"></script>
   <script type="text/paperscript" src="animation.js" canvas="mainCanvas"></script>
   <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkhKwouCV58ow89MNOIDFQDJbJfR11-xU&signed_in=true&callback=init" async defer></script> -->
   <script type="text/javascript" src="https://download-data-uri.appspot.com/js/download-data-uri.js"></script>
@@ -193,8 +194,6 @@
     font-style: italic;
   }
 
-  .radio-answers {}
-
   .radio-answers input[type="radio"] {
     display: none;
   }
@@ -295,6 +294,12 @@
   #smoke {
     animation: smokeFade 4.5s ease infinite;
   }
+
+
+#answer1, #answer2, #answer3, #answer4 {
+  margin-bottom: 7px;
+}
+
 </style>
 
 <body>
@@ -318,12 +323,15 @@
       </div>
       <br>
       <div class="radio-answers clearfix">
+        <div id="answer1">
         <input type="radio" id="radio1" name="destination0" value="true">
         <label for="radio1">You just get me sometimes.</label>
-        <br>
-        <br>
+      </div>
+
+        <div id="answer2">
         <input type="radio" id="radio2" name="destination0" value="false">
         <label for="radio2">How could I? Birds dress me in the morning.</label>
+        </div>
       </div>
     </div>
     <div id="step3">
@@ -332,12 +340,15 @@
       </div>
       <br>
       <div class="radio-answers clearfix">
+        <div id="answer3">
         <input type="radio" id="radio3" name="destination1" value="true">
         <label for="radio3">You just get me sometimes.</label>
-        <br>
-        <br>
+        </div>
+
+        <div id="answer4">
         <input type="radio" id="radio4" name="destination1" value="false">
         <label for="radio4">How could I? Birds dress me in the morning.</label>
+        </div>
       </div>
     </div>
     <div id="step4">
@@ -587,25 +598,8 @@
     }
 
     function drawLandmarks() {
-      var landmarks = [
-        [40.444279, -79.953263],
-        [40.444406, -79.942803],
-        [40.442239, -79.943450],
-        [40.441098, -79.943721],
-        [40.440463, -79.946014],
-        [40.438977, -79.947742],
-        [40.443290, -79.950152],
-        [40.438361, -79.922636],
-        [40.445371, -79.941967],
-        [40.446431, -79.951147],
-        [40.447231, -79.949764],
-        [40.444846, -79.956198],
-        [40.437890, -79.938214],
-        [40.442429, -79.946998],
-        [40.444859, -79.948743]
-      ]
       for (i = 0; i < landmarks.length; i++) {
-        var latlng = new google.maps.LatLng(landmarks[i][0], landmarks[i][1])
+        var latlng = new google.maps.LatLng(landmarks[i].lat, landmarks[i].lng)
           // console.log(latlng.lat(), latlng.lng())
         if (map.getBounds().contains(latlng) == true) {
           var landmarkPixelCords = latLngControl.updatePosition(latlng)

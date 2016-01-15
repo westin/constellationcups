@@ -60,10 +60,10 @@ function timeStamp() {
         processData: false,
         data: mdata,
         success: function(data) {
-          alert(data);
+          console.log(data);
         },
         error: function(jqXHR, textStatus, errorThrown) {
-          alert("Error when uploading file: " + textStatus + " because:" + errorThrown);
+          alert("Error when uploading file! Please alert someone on nearby!");
         }
       });
     }
@@ -145,9 +145,17 @@ $(document).ready(function() {
   $("label[for='radio1']").text(destinations[0].trueAnswer)
   $("label[for='radio2']").text(destinations[0].falseAnswer)
 
+	if (Math.random() >= 0.5) {
+	$("#answer2").before($("#answer1"));
+	}
+
   $("#step3 .question span").text(destinations[1].question)
   $("label[for='radio3']").text(destinations[1].trueAnswer)
   $("label[for='radio4']").text(destinations[1].falseAnswer)
+
+	if (Math.random() >= 0.5) {
+	$("#answer4").before($("#answer3"));
+	}
 
   $('#next-button').click(function() {
     if ($(".is-selected")[0].id == "step1") {

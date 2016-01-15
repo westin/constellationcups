@@ -12,40 +12,40 @@ var destinations = [{
   lng: -79.946460,
   description: "Quiet coffee shop with a beautiful view",
   question: "Preferred painting ? ",
-  trueAnswer: "Caspar Friedrich's Wanderer Above a Sea of Fog",
-  falseAnswer: "Nicolas Cage's The Pheasant Has No Agenda "
+  trueAnswer: "Caspar Friedrich's: Wanderer Above a Sea of Fog",
+  falseAnswer: "Nicolas Cage's The Pheasant Has No Agenda"
 }, {
   name: "Forbes Field Outfield Wall",
   lat: 40.441581,
   lng: -79.952815,
   description: "The Pirates used to play here",
-  question: "Friday night at the movies?",
-  trueAnswer: "Affirmative!",
-  falseAnswer: ""
+  question: "Favorite Pirates player?",
+  trueAnswer: "Dock Ellis",
+  falseAnswer: "Roberto Celemente"
 }, {
   name: "The Manor Theatre",
   lat: 40.437254,
   lng: -79.922665,
   description: "Curated movies with a full bar",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Friday night at the movies?",
+  trueAnswer: "Affirmative!",
+  falseAnswer: "Can't wait to see the new Transformers movie"
 }, {
   name: "Butterjoint",
   lat: 40.450293,
   lng: -79.950893,
   description: "Amazing cocktails",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Which do you prefer?",
+  trueAnswer: "Gin and Tonic",
+  falseAnswer: "Gym and Tan"
 }, {
   name: "Schenley Overlook",
   lat: 40.4303280,
   lng: -79.9451363,
   description: "Nice view in the park",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Spicy?",
+  trueAnswer: "I only order 11",
+  falseAnswer: "Pass the water"
 }, {
   name: "Spice Island Tea House",
   lat: 40.440149,
@@ -62,22 +62,6 @@ var destinations = [{
   question: "Who let the dogs out ? ",
   trueAnswer: "You blame your cousin without any shame.",
   falseAnswer: "You are a good person & admit openly that this song is way outdated."
-}, {
-  name: "Patio Behind Carnegie Museum",
-  lat: 40.443172,
-  lng: -79.949485,
-  description: "Patio, Tables during summer, waterfalls",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
-}, {
-  name: "Cathedral of Learning ",
-  lat: 40.444312,
-  lng: -79.953284,
-  description: "The top floor has a cool view",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
 }, {
   name: "Love Locks on Schenley Bridge",
   lat: 40.441194,
@@ -107,25 +91,25 @@ var destinations = [{
   lat: 40.437900,
   lng: -79.920386,
   description: "Second hand clothes",
-  question: "Grandpa's hand me downs?",
-  trueAnswer: "Yes",
+  question: "Is that your grandma's coat?",
+  trueAnswer: "It was 99 cents",
   falseAnswer: "No"
 }, {
   name: "Girasole",
   lat: 40.451112,
   lng: -79.934077,
   description: "Family Run Italian Food",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Dinner out?",
+  trueAnswer: "It's a date",
+  falseAnswer: "As long as its cheap"
 }, {
   name: "Mary Schenley Memorial Fountain",
   lat: 40.441926,
   lng: -79.951218,
   description: "Sculpture in bronze and granite by Victor David Brenner",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Need to get off campus?",
+  trueAnswer: "No time",
+  falseAnswer: "I was just in Bloomfield"
 }, {
   name: "Prantl's Bakery",
   lat: 40.451801,
@@ -139,9 +123,9 @@ var destinations = [{
   lat: 40.445874,
   lng: -79.948815,
   description: "Korean style karaoke with private rooms",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Are you the next Frank Sinatra?",
+  trueAnswer: "Yes",
+  falseAnswer: "No"
 }, {
   name: "Tram's Kitchen",
   lat: 40.465604,
@@ -150,22 +134,6 @@ var destinations = [{
   question: "Pho?",
   trueAnswer: "Pha?",
   falseAnswer: "Pho"
-}, {
-  name: "The shark Grave (Allegheny Cemetery)",
-  lat: 40.474975,
-  lng: -79.955993,
-  description: "Really intense old guy who really liked sharks. ",
-  question: "TUH-DUM. ",
-  trueAnswer: "*High pitched screech*",
-  falseAnswer: "Death per year by humans: 100 Million "
-}, {
-  name: "Dave and Andys",
-  lat: 40.441021,
-  lng: -79.956861,
-  description: "Ice Cream",
-  question: "Ben & Jerry's ? ",
-  trueAnswer: "With posh british accent: Oh, those bloody capitalists.",
-  falseAnswer: "Well... Their cookie dough does taste better than my grandma's..."
 }, {
   name: "Mellon Park",
   lat: 40.453107,
@@ -179,9 +147,9 @@ var destinations = [{
   lat: 40.460470,
   lng: -79.924885,
   description: "installed text art billboard",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "How do you like your art?",
+  trueAnswer: "Big",
+  falseAnswer: "Yes"
 }, {
   name: "Las Palmas Tacos",
   lat: 40.439027,
@@ -195,73 +163,49 @@ var destinations = [{
   lat: 40.432733,
   lng: -79.923509,
   description: "Lots of vinyl",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
-}, {
-  name: "Delucas",
-  lat: 40.451744,
-  lng: -79.983628,
-  description: "An unadulterated Pittsburgh diner experience",
-  question: "Do you frequent affordable Swedish delis?",
-  trueAnswer: "Ja",
-  falseAnswer: "No"
+  question: "Where do you go to buy needles?",
+  trueAnswer: "Radio Shack",
+  falseAnswer: "Craft Store"
 }, {
   name: "Ritters Diner",
   lat: 40.456649,
   lng: -79.941232,
   description: "24-hour breakfast, get some.",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Munchies?",
+  trueAnswer: "Yes",
+  falseAnswer: "No"
 }, {
   name: "Espresso a Mano",
   lat: 40.466276,
   lng: -79.965096,
   description: "Great espresso in the heart of Lawrenceville",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
-}, {
-  name: "21st St Coffee and Tea",
-  lat: 40.451932,
-  lng: -79.984369,
-  description: "Great coffee in the Strip",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
-}, {
-  name: "Jewish Community Center",
-  lat: 40.437514,
-  lng: -79.923676,
-  description: "Exercise facilities and home to the one and only Al Rose",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Do you frequent affordable Swedish delis?",
+  trueAnswer: "Ja",
+  falseAnswer: "No"
 }, {
   name: "The Squirrel Hill Cafe",
   lat: 40.438145,
   lng: -79.922685,
   description: "Cheap beer, cheap food, all good",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "What kind of bar are you going to?",
+  trueAnswer: "Somewhere where I can drink my PBR and smoke my Spirits",
+  falseAnswer: "Going to Will Penn"
 }, {
   name: "Pamela's Diner Shadyside",
   lat: 40.451650,
   lng: -79.932610,
   description: "Quintessential Pittsburgh Breakfast",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Breakfast?",
+  trueAnswer: "Mmmm pancakes",
+  falseAnswer: "Too early"
 }, {
   name: "Constellation Coffee",
   lat: 40.465720,
   lng: -79.955637,
   description: "espresso bar and fine coffee",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Self Promotion?",
+  trueAnswer: "Why didn't you say so?!",
+  falseAnswer: "Sell out."
 }, {
   name: "Construction Junction",
   lat: 40.449926,
@@ -275,103 +219,87 @@ var destinations = [{
   lat: 40.438091,
   lng: -79.953672,
   description: "Church turned hookah bar",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Fumas la cachimba?",
+  trueAnswer: "Sí",
+  falseAnswer: "Qué"
 }, {
   name: "The Church Brew Works",
   lat: 40.462045,
   lng: -79.964428,
   description: "Church turned brewpub",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "How do you like your Jesus?",
+  trueAnswer: "In a tuxedo T-shirt",
+  falseAnswer: "Baby Jesus"
 }, {
   name: "Miss Saigon 88 Cafe",
   lat: 40.451256,
   lng: -79.951433,
   description: "Get the pho",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Do you like vietnamese noodle soup?",
+  trueAnswer: "Yes oh yes I do!",
+  falseAnswer: "Please no more!"
 }, {
   name: "K & T's Fish and Chicken",
   lat: 40.451898,
   lng: -79.952450,
-  description: "All the supplies for a good building",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  description: "All the supplies for a good evening",
+  question: "Blunts and Chicken?",
+  trueAnswer: "Blunts and Chicken",
+  falseAnswer: "Chicken, hold the blunts"
 }, {
   name: "Salims Middle Eastern Food",
   lat: 40.452767,
   lng: -79.949492,
   description: "Best hummus in Oakland",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Pita?",
+  trueAnswer: "Hummus",
+  falseAnswer: "Babaganoush"
 }, {
   name: "Mercurios",
   lat: 40.451523,
   lng: -79.932311,
   description: "Pizza and Gelato",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Pizza or cheeseburger?",
+  trueAnswer: "Pizza",
+  falseAnswer: "Cheeseburger"
 }, {
   name: "Toadflax Inc",
   lat: 40.451069,
   lng: -79.933621,
   description: "Beautiful flower shop",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "I love the smell of...",
+  trueAnswer: "Roses",
+  falseAnswer: "Bacon"
 }, {
   name: "Mind Cure Records",
   lat: 40.457683,
   lng: -79.965824,
   description: "Great for punk records and imports",
-  question: " Simple Plan or The Cure ? ",
+  question: "Simple Plan or The Cure ? ",
   trueAnswer: "Drugged out 60 year olds",
   falseAnswer: "Angsty Teens"
-}, {
-  name: "Lili Coffee Shop",
-  lat: 40.457683,
-  lng: -79.965824,
-  description: "Good coffee in Polish Hill",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
 }, {
   name: "Copacetic Comics Company",
   lat: 40.457683,
   lng: -79.965824,
   description: "Learn everything about comics",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Who watches the watchmen?",
+  trueAnswer: "Doctor Manhattan",
+  falseAnswer: "I do"
 }, {
   name: "Eons Fashion Antique",
   lat: 40.456815,
   lng: -79.929343,
   description: "60s and 70s clothing",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
+  question: "Grandpa's hand me downs?",
+  trueAnswer: "Yes",
+  falseAnswer: "No"
 }, {
   name: "The Junction Hollow Trail",
   lat: 40.435193,
-  lng: 79.949930,
+  lng: -79.949930,
   description: "Scenic bike route",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
-}, {
-  name: "Creative Re-use ",
-  lat: 40.450090,
-  lng: -79.897601,
-  description: "You name it; they have it. ",
-  question: "",
-  trueAnswer: "",
-  falseAnswer: ""
-}, ]
+  question: "Bike",
+  trueAnswer: "I just bought some fat tires",
+  falseAnswer: "I love my fixie"
+}]
