@@ -673,14 +673,14 @@
     function drawStarAtPoint(x, y, index) {
       console.log(index)
       if (index == 100) {
-        project.importSVG("/svgs/compass.svg", function(item) {
+        project.importSVG("svgs/compass.svg", function(item) {
           // console.log(item);
           item.position = new Point(x, y);
           item.scale(0.45)
         });
       }
       if (index == 1) {
-        project.importSVG("/svgs/empty_star.svg", function(item) {
+        project.importSVG("svgs/empty_star.svg", function(item) {
           // console.log(item);
           item.position = new Point(x, y);
           item.scale(0.5)
@@ -1304,7 +1304,7 @@
 
 
 
-        project.importSVG("/svgs/logo.svg", function(item) {
+        project.importSVG("svgs/logo.svg", function(item) {
           // console.log(item);
           item.position = new Point(950, 370);
           // item.scale(0.8)
