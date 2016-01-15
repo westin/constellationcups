@@ -40,12 +40,17 @@
     /*font-family: "proxima-nova";
     background-color: #fbfbfb;
     color: #333;*/
+    height: 100vh;
+    width: 100vw;
   }
 
   #map {
-    height: 447px;
+    height: 390px;
     width: 600px;
     visibility: hidden;
+    position: absolute;
+    top: 0;
+    z-index: 0;
     /*display: none;*/
   }
 
@@ -54,6 +59,10 @@
     background: #f9f1f1;
     height: 447px;
     width: 1200px;
+    /*visibility: hidden;*/
+    position: absolute;
+    top: 0;
+    z-index: 0;
     /*display: none;*/
   }
 
@@ -63,6 +72,7 @@
     color: #333;
     height: 100vh;
     width: 100vw;
+    z-index: 1;
     /*height: 100vh ;
     width: 100vw;
     margin: 0 auto;*/
@@ -390,10 +400,10 @@
   <script type="text/javascript">
     var STAR_MAX_DISTANCE = 5;
     var STAR_SCALE = 2;
-    var STEP_NUMBER_DIST = 15;
+    var STEP_NUMBER_DIST = 17;
     var LANDMARK_MIN_DISTANCE = 60;
     var LANDMARK_MAX_DISTANCE = 800;
-
+    var FINAL_DESTINATION_NAME;
 
     var directionsService;
     var map;
@@ -403,6 +413,7 @@
     var directionConstellationGroup;
     var landmarksInBounds = [];
     var starGroup;
+    var directionPathBounding;
 
     var starPath1 =
       "M262.825007,167 L264.540905,168.36331 L266.278803,167.113278 L265.258953,169.026826 L267.017681,170.369305 L264.97927,170.097463 L264.812747,171.927808 L264.021794,169.889397 L262,169.845163 L263.561077,168.830345 L262.825007,167 Z"
@@ -427,7 +438,7 @@
       var projection = this.getProjection();
       var point = projection.fromLatLngToContainerPixel(latLng);
 
-      return ([point.x, point.y])
+      return ([point.x, point.y + 47])
     };
 
 
@@ -444,12 +455,14 @@
       latLngControl = new LatLngControl(map);
 
       console.log("we made it")
-      getDirections(directionsService, "40.444359, -79.941564", "40.457683, -79.965824")
+      // getDirections(directionsService, "40.444359, -79.941564", "40.457683, -79.965824", "westin", "Hunt Library")
         // getDirections(directionsService, "40.444359, -79.941564", "40.441581, -79.952815");
     }
 
 
-    function getDirections(directionsService, start, end) {
+    function getDirections(directionsService, start, end, name, destinationName) {
+      PERSONS_NAME = name
+      FINAL_DESTINATION_NAME = destinationName
       directionsService.route({
         origin: start,
         destination: end,
@@ -514,7 +527,99 @@
     paper.install(window);
     paper.setup('mainCanvas');
 
+
+
+    function exportAndSaveIMG() {
+      with (paper){
+        var svg = project.exportSVG({
+          asString: true
+        });
+      }
+      // FILE = 'data:image/svg+xml;base64,' + btoa(svg)
+      console.log(svg)
+
+
+
+      function timeStamp() {
+        // Create a date object with the current time
+        var now = new Date();
+
+        // Create an array with the current month, day and time
+        var date = [now.getMonth() + 1, now.getDate(), now.getFullYear()];
+
+        // Create an array with the current hour, minute and second
+        var time = [now.getHours(), now.getMinutes()];
+
+        // Determine AM or PM suffix based on the hour
+        var suffix = (time[0] < 12) ? "AM" : "PM";
+
+        // Convert hour from military time
+        time[0] = (time[0] < 12) ? time[0] : time[0] - 12;
+
+        // If hour is 0, set it to 12
+        time[0] = time[0] || 12;
+
+        // If seconds and minutes are less than 10, add a zero
+        for (var i = 1; i < 3; i++) {
+          if (time[i] < 10) {
+            time[i] = "0" + time[i];
+          }
+        }
+
+        // Return the formatted string
+        return time.join(".") + ' ' + suffix;
+      }
+
+
+
+      uploadMedia = function(filename, mdata) {
+        var accesstoken = '1-Lf0XYUe7oAAAAAAAENtLlPWO-A81SrM9JbUBOza3COUER5XTwQdUWL45Hl2lqA'
+        $.ajax({
+          type: 'POST',
+          url: 'https://api-content.dropbox.com/1/files_put/auto/constellation_exports/' + filename,
+          headers: {
+            'Authorization': 'Bearer ' + accesstoken,
+            'Content-Type': 'text/plain'
+          },
+          dataType: 'html',
+          processData: false,
+          data: mdata,
+          success: function(data) {
+            console.log(data);
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            alert("Error when uploading file! Please alert someone on nearby!");
+          }
+        });
+      }
+
+      uploadMedia(timeStamp() + '.svg', svg)
+
+      // downloadDataUri({
+      //   data: 'data:image/svg+xml;base64,' + btoa(svg),
+      //   filename: 'export.svg'
+      // });
+
+
+    }
+
+
+
     function makeLines(directionSteps) {
+
+      // var directionListBounding = new Shape.Rectangle(new Point(0, 447), new Point(1200, 380))
+      // var directionListBounding2 = new Shape.Rectangle(new Point(700, 0), new Point(1200, 447))
+      // directionListBounding.fillColor = 'red'
+      // directionListBounding2.fillColor = 'red'
+
+      directionPathBounding = new Shape.Rectangle(new Point(5, 407), new Point(700, 40))
+        // console.log(directionPathBounding.bounds.height)
+      directionPathBounding.strokeWidth = 1
+      directionPathBounding.strokeColor = "black"
+
+
+      // var pathBox = new Shape.Rectangle(new Point(1, 380), new Point(700, 0))
+
       directionPath = new Path();
       directionPath.strokeColor = '#999999';
       directionPath.strokeWidth = 1;
@@ -597,563 +702,636 @@
     function drawStepNumbers(stepIndex, givenX, givenY) {
       $.getJSON('hersheytext/hersheytext.min.json', function(fonts) {
 
-          // var path = new paper.Path(fonts[font].chars[56].d);
-          // path.strokeColor = 'black';
-          // path.Fill
-          // path.position.x += 100;
+        // var path = new paper.Path(fonts[font].chars[56].d);
+        // path.strokeColor = 'black';
+        // path.Fill
+        // path.position.x += 100;
 
-          // path.strokeWidth = 1;
+        // path.strokeWidth = 1;
 
 
 
-          function write(s, x, y, scale) {
+        function write(s, x, y, scale) {
 
-            var pathGroup = new paper.Group({});
+          var pathGroup = new paper.Group({});
 
-            var start = 0;
+          var start = 0;
 
-            var index = 0;
+          var index = 0;
 
-            var words = s;
+          var words = s;
 
-            var temp_words = new Array();
+          var temp_words = new Array();
 
-            for (var w in words) {
-              word = words[w];
-              if (word.indexOf("'") != -1 && word.length > 1) {
-                word = word.split(/(?=('))/)
-                word[2] = word[2].substr(1)
-                temp_words = temp_words.concat(word)
-              } else if (word.indexOf(".") != -1 && word.length > 1) {
-                word = word.split(/(?=(\.))/)
-                word.pop()
-                temp_words = temp_words.concat(word)
-              } else {
-                temp_words.push(word)
-              }
+          for (var w in words) {
+            word = words[w];
+            if (word.indexOf("'") != -1 && word.length > 1) {
+              word = word.split(/(?=('))/)
+              word[2] = word[2].substr(1)
+              temp_words = temp_words.concat(word)
+            } else if (word.indexOf(".") != -1 && word.length > 1) {
+              word = word.split(/(?=(\.))/)
+              word.pop()
+              temp_words = temp_words.concat(word)
+            } else {
+              temp_words.push(word)
             }
+          }
 
-            words = temp_words;
+          words = temp_words;
 
-            for (var w in words) {
-              var word = words[w];
-              var wordPath;
+          for (var w in words) {
+            var word = words[w];
+            var wordPath;
 
-              // Move through each letter
-              // int offset =
-              for (var i in word) {
-                index = word.charCodeAt(i) - 33;
+            // Move through each letter
+            // int offset =
+            for (var i in word) {
+              index = word.charCodeAt(i) - 33;
 
-                if (index >= 16 && index <= 24) {
-                  font = "futural"
-                } else {
-                  font = "scripts"
-                }
-
-                var path = new paper.Path(fonts[font].chars[index].d);
-
-                path.strokeColor = 'black';
-                path.strokeWidth = 1;
-
-                if (index != 6 && index != 13) {
-                  start += 9 + fonts[font].chars[index].o;
-                }
-
-                path.position.x = start;
-
-                path.Fill
-                if (index == 83) {
-                  path.position.x = start - 3;
-                  var path2Data = 'M1,9 L8,9';
-                  var path2 = new paper.Path(path2Data);
-                  path2.position = new paper.Point(path.position.x - 2, path.position.y - 3)
-                  path2.strokeColor = 'black';
-                  path2.strokeWidth = 1;
-                  pathGroup.addChild(path2);
-                } else if (index == 72) {
-                  var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
-                  var path2 = new paper.Path(path2Data);
-                  path2.position = new paper.Point(path.position.x, path.position.y - 12)
-                  path2.strokeColor = 'black';
-                  path2.strokeWidth = 1;
-                  pathGroup.addChild(path2);
-                } else if (index == 73) {
-                  var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
-                  var path2 = new paper.Path(path2Data);
-                  path2.position = new paper.Point(path.position.x + 3, path.position.y - 18)
-                  path2.strokeColor = 'black';
-                  path2.strokeWidth = 1;
-                  pathGroup.addChild(path2);
-                }
-
-                if (i == 0) {
-                  wordPath = path;
-                } else {
-                  wordPath.join(path);
-                }
-
+              if (index >= 16 && index <= 24) {
+                font = "futural"
+              } else {
+                font = "scripts"
               }
+
+              if (index == 54) {
+                index = 86
+              }
+
+              var path = new paper.Path(fonts[font].chars[index].d);
+
+              path.strokeColor = 'black';
+              path.strokeWidth = 1;
 
               if (index != 6 && index != 13) {
-                start += 8;
+                start += 9 + fonts[font].chars[index].o;
               }
 
-              if ((index <= 16 || index >= 24) && (word.indexOf("pp") == -1)) {
-                wordPath.simplify();
+              path.position.x = start;
+
+              path.Fill
+              if (index == 83) {
+                path.position.x = start - 3;
+                var path2Data = 'M1,9 L8,9';
+                var path2 = new paper.Path(path2Data);
+                path2.position = new paper.Point(path.position.x - 2, path.position.y - 3)
+                path2.strokeColor = 'black';
+                path2.strokeWidth = 1;
+                pathGroup.addChild(path2);
+              } else if (index == 72) {
+                var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
+                var path2 = new paper.Path(path2Data);
+                path2.position = new paper.Point(path.position.x, path.position.y - 12)
+                path2.strokeColor = 'black';
+                path2.strokeWidth = 1;
+                pathGroup.addChild(path2);
+              } else if (index == 73) {
+                var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
+                var path2 = new paper.Path(path2Data);
+                path2.position = new paper.Point(path.position.x + 3, path.position.y - 18)
+                path2.strokeColor = 'black';
+                path2.strokeWidth = 1;
+                pathGroup.addChild(path2);
               }
 
-              pathGroup.addChild(wordPath);
-
-            }
-
-            pathGroup.position = new paper.Point(x, y);
-            pathGroup.scale(scale);
-
-            return pathGroup;
-          }
-
-
-
-          var step = directionSteps[stepIndex]
-            var stepNumberPoint = new Point(givenX, givenY)
-            // var stepNumber = new PointText(stepNumberPoint)
-            // var stepNumber = new PointText({
-            //   point: stepNumberPoint,
-            //   content: stepIndex,
-            //   justification: 'center',
-            //   fillColor: 'black',
-            //   fontFamily: 'Helvetica'
-            // })
-
-          var stepNumber = write(String(stepIndex), givenX, givenY, 0.4)
-
-          // stepNumber.fontFamily = 'machine_script'
-          // stepNumber.justification = 'center'
-          // stepNumber.fillColor = 'black'
-          // stepNumber.content = stepIndex
-          var dist = STEP_NUMBER_DIST
-          var pointPossibilities = [
-            new Point(givenX, givenY - dist),
-            new Point(givenX + (dist / 2), givenY - dist),
-            new Point(givenX + dist, givenY),
-            new Point(givenX + dist, givenY + (dist / 2)),
-            new Point(givenX, givenY + dist),
-            new Point(givenX - (dist / 2), givenY + dist),
-            new Point(givenX - dist, givenY),
-            new Point(givenX - dist, givenY - (dist / 2))
-          ]
-          while (stepNumber.intersects(directionPath) || stepNumber.intersects(directionConstellationGroup)) {
-            var newStepNumberPoint = pointPossibilities[Math.floor(Math.random() * pointPossibilities.length)];
-            stepNumber.position = newStepNumberPoint
-          }
-          directionConstellationGroup.addChild(stepNumber)
-
-
-
-
-
-
-        })
-      }
-
-
-
-
-
-
-
-
-
-      function drawLandmarks() {
-
-        $.getJSON('hersheytext/hersheytext.min.json', function(fonts) {
-
-          // var path = new paper.Path(fonts[font].chars[56].d);
-          // path.strokeColor = 'black';
-          // path.Fill
-          // path.position.x += 100;
-
-          // path.strokeWidth = 1;
-
-
-
-          function write(s, x, y, scale) {
-
-            var pathGroup = new paper.Group({});
-
-            var start = 0;
-
-            var index = 0;
-
-            var words = s.split(' ');
-
-            var temp_words = new Array();
-
-            for (var w in words) {
-              word = words[w];
-              if (word.indexOf("'") != -1 && word.length > 1) {
-                word = word.split(/(?=('))/)
-                word[2] = word[2].substr(1)
-                temp_words = temp_words.concat(word)
-              } else if (word.indexOf(".") != -1 && word.length > 1) {
-                word = word.split(/(?=(\.))/)
-                word.pop()
-                temp_words = temp_words.concat(word)
+              if (i == 0) {
+                wordPath = path;
               } else {
-                temp_words.push(word)
-              }
-            }
-
-            words = temp_words;
-
-            for (var w in words) {
-              var word = words[w];
-              var wordPath;
-
-              // Move through each letter
-              // int offset =
-              for (var i in word) {
-                index = word.charCodeAt(i) - 33;
-
-                if (index >= 16 && index <= 24) {
-                  font = "futural"
-                } else {
-                  font = "scripts"
-                }
-
-                var path = new paper.Path(fonts[font].chars[index].d);
-
-                path.strokeColor = 'black';
-                path.strokeWidth = 1;
-
-                if (index != 6 && index != 13) {
-                  start += 9 + fonts[font].chars[index].o;
-                }
-
-                path.position.x = start;
-
-                path.Fill
-                if (index == 83) {
-                  path.position.x = start - 3;
-                  var path2Data = 'M1,9 L8,9';
-                  var path2 = new paper.Path(path2Data);
-                  path2.position = new paper.Point(path.position.x - 2, path.position.y - 3)
-                  path2.strokeColor = 'black';
-                  path2.strokeWidth = 1;
-                  pathGroup.addChild(path2);
-                } else if (index == 72) {
-                  var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
-                  var path2 = new paper.Path(path2Data);
-                  path2.position = new paper.Point(path.position.x, path.position.y - 12)
-                  path2.strokeColor = 'black';
-                  path2.strokeWidth = 1;
-                  pathGroup.addChild(path2);
-                } else if (index == 73) {
-                  var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
-                  var path2 = new paper.Path(path2Data);
-                  path2.position = new paper.Point(path.position.x + 3, path.position.y - 18)
-                  path2.strokeColor = 'black';
-                  path2.strokeWidth = 1;
-                  pathGroup.addChild(path2);
-                }
-
-                if (i == 0) {
-                  wordPath = path;
-                } else {
-                  wordPath.join(path);
-                }
-
+                wordPath.join(path);
               }
 
-              if (index != 6 && index != 13) {
-                start += 8;
+              if (index >= 27 && index <= 54) {
+                start += 4;
               }
-
-              if ((index <= 16 || index >= 24) && (word.indexOf("pp") == -1)) {
-                wordPath.simplify();
-              }
-
-              pathGroup.addChild(wordPath);
 
             }
 
-            pathGroup.position = new paper.Point(x, y);
-            pathGroup.scale(scale);
+            if (index != 6 && index != 13) {
+              start += 8;
+            }
 
-            return pathGroup;
+            if ((index <= 16 || index >= 24) && (word.indexOf("pp") == -1)) {
+              wordPath.simplify(2.2);
+            }
+
+            pathGroup.addChild(wordPath);
+
           }
 
+          pathGroup.position = new paper.Point(x, y);
+          pathGroup.scale(scale);
 
-          for (i = 0; i < landmarks.length; i++) {
-            var latlng = new google.maps.LatLng(landmarks[i].lat, landmarks[i].lng)
-              // console.log(latlng.lat(), latlng.lng())
-            if (map.getBounds().contains(latlng) == true) {
-              var landmarkPixelCords = latLngControl.updatePosition(latlng)
-              landmarksInBounds.push({
-                  cords: landmarkPixelCords,
-                  name: landmarks[i].name
-                })
-                // var waypoint = new Shape.Circle(new Point(landmarkPixelCords[0], landmarkPixelCords[1]), 5);
-                // waypoint.strokeColor = 'black';
-
-            }
-          }
-          var placedLandmarkCount = 0;
-
-          function shuffle(array) {
-            var currentIndex = array.length,
-              temporaryValue, randomIndex;
-
-            // While there remain elements to shuffle...
-            while (0 !== currentIndex) {
-
-              // Pick a remaining element...
-              randomIndex = Math.floor(Math.random() * currentIndex);
-              currentIndex -= 1;
-
-              // And swap it with the current element.
-              temporaryValue = array[currentIndex];
-              array[currentIndex] = array[randomIndex];
-              array[randomIndex] = temporaryValue;
-            }
-
-            return array;
-          }
-
-          landmarksInBounds = shuffle(landmarksInBounds)
-
-          var directionListBounding = new Shape.Rectangle(new Point(0, 447), new Point(1200, 380))
-          directionListBounding.fillColor = 'rgba(17, 17, 17, 0.1)'
-
-          var directionListBounding2 = new Shape.Rectangle(new Point(700, 0), new Point(1200, 447))
-          directionListBounding2.fillColor = 'rgba(17, 17, 17, 0.1)'
-
-          for (i = 0; i < landmarksInBounds.length; i++) {
-            var isTooClose = false
-              // var cloneDirectionPath = directionPath.clone({
-              //   insert: false
-              // })
-              // cloneDirectionPath.flatten(50)
-              // console.log(cloneDirectionPath.segments[0].point)
-            for (j = 0; j < directionPath.segments.length; j++) {
-              var landmarkPoint = new Point(landmarksInBounds[i].cords[0], landmarksInBounds[i].cords[1])
-              var starPoint = directionPath.segments[j].point
-              var distPath = new Path.Line(landmarkPoint, starPoint)
-              if (distPath.length < LANDMARK_MIN_DISTANCE || directionListBounding.contains(landmarkPoint) == true || directionListBounding2.contains(landmarkPoint) == true){
-                // || distPath.length > LANDMARK_MAX_DISTANCE
-                isTooClose = true
-              }
-              distPath.remove()
-            }
-            if (isTooClose == false && placedLandmarkCount < 3) {
-              var landmark = new Path(starPath1)
-              landmark.scale(2)
-              landmark.rotate(Math.random() * 360)
-              landmark.position = new Point(landmarkPoint)
-              landmark.fillColor = 'black'
-                // var landmarkText = new PointText(landmarkPoint.x + 5, landmarkPoint.y + 10)
-                // landmarkText.content = landmarksInBounds[i].name
-                // landmarkText.fillColor = 'black'
-                // landmarkText.fontSize = '9'
-                // landmarkText.justification = 'left'
-
-              var landmarkText = write(landmarksInBounds[i].name, landmarkPoint.x + 5, landmarkPoint.y + 10, 0.4)
-              landmarkText.position.x += (landmarkText.bounds.width / 2)
-              if (landmarkText.intersects(directionPath)) {
-                landmarkText.position.x -= (landmarkText.bounds.width)
-                if (landmarkText.intersects(directionPath)) {
-                  landmarkText.remove()
-                  landmark.remove
-                  placedLandmarkCount -= 1
-                }
-              }
-              paper.view.draw();
-              placedLandmarkCount += 1
-            }
-          }
-
-
-
-          directionListBounding.remove()
-          directionListBounding2.remove()
-
-
-
-
-        });
-        drawDirections()
-      }
-
-
-
-
-      function drawDirections(){
-        $.getJSON('hersheytext/hersheytext.min.json', function(fonts) {
-
-          // var path = new paper.Path(fonts[font].chars[56].d);
-          // path.strokeColor = 'black';
-          // path.Fill
-          // path.position.x += 100;
-
-          // path.strokeWidth = 1;
-
-
-
-          function write(s, x, y, scale) {
-
-            var pathGroup = new paper.Group({});
-
-            var start = 0;
-
-            var index = 0;
-
-            var words = s.split(' ');
-
-            var temp_words = new Array();
-
-            for (var w in words) {
-              word = words[w];
-              if (word.indexOf("'") != -1 && word.length > 1) {
-                word = word.split(/(?=('))/)
-                word[2] = word[2].substr(1)
-                temp_words = temp_words.concat(word)
-              } else if (word.indexOf(".") != -1 && word.length > 1) {
-                word = word.split(/(?=(\.))/)
-                word.pop()
-                temp_words = temp_words.concat(word)
-              } else {
-                temp_words.push(word)
-              }
-            }
-
-            words = temp_words;
-
-            for (var w in words) {
-              var word = words[w];
-              var wordPath;
-
-              // Move through each letter
-              // int offset =
-              for (var i in word) {
-                index = word.charCodeAt(i) - 33;
-
-                if (index >= 16 && index <= 24) {
-                  font = "futural"
-                } else {
-                  font = "scripts"
-                }
-
-                var path = new paper.Path(fonts[font].chars[index].d);
-
-                path.strokeColor = 'black';
-                path.strokeWidth = 1;
-
-                if (index != 6 && index != 13) {
-                  start += 9 + fonts[font].chars[index].o;
-                }
-
-                path.position.x = start;
-
-                path.Fill
-                if (index == 83) {
-                  path.position.x = start - 3;
-                  var path2Data = 'M1,9 L8,9';
-                  var path2 = new paper.Path(path2Data);
-                  path2.position = new paper.Point(path.position.x - 2, path.position.y - 3)
-                  path2.strokeColor = 'black';
-                  path2.strokeWidth = 1;
-                  pathGroup.addChild(path2);
-                } else if (index == 72) {
-                  var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
-                  var path2 = new paper.Path(path2Data);
-                  path2.position = new paper.Point(path.position.x, path.position.y - 12)
-                  path2.strokeColor = 'black';
-                  path2.strokeWidth = 1;
-                  pathGroup.addChild(path2);
-                } else if (index == 73) {
-                  var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
-                  var path2 = new paper.Path(path2Data);
-                  path2.position = new paper.Point(path.position.x + 3, path.position.y - 18)
-                  path2.strokeColor = 'black';
-                  path2.strokeWidth = 1;
-                  pathGroup.addChild(path2);
-                }
-
-                if (i == 0) {
-                  wordPath = path;
-                } else {
-                  wordPath.join(path);
-                }
-
-              }
-
-              if (index != 6 && index != 13) {
-                start += 8;
-              }
-
-              if ((index <= 16 || index >= 24) && (word.indexOf("pp") == -1)) {
-                wordPath.simplify();
-              }
-
-              pathGroup.addChild(wordPath);
-
-            }
-
-            pathGroup.position = new paper.Point(x, y);
-            pathGroup.scale(scale);
-
-            return pathGroup;
-          }
-
-          function writeDirections(directions, x, y, scale) {
-            directionsGroup = new paper.Group({});
-            var curStep = 1;
-            for (i in directions) {
-              direction = directions[i]["instructions"];
-              if(directions[i].isToward == false){
-                i++;
-                console.log(directions[i-1])
-                directionGroup = write(curStep + ". " + direction, 50, 50 * curStep, 1);
-                curStep += 1;
-                i--;
-                directionsGroup.addChild(directionGroup);
-              }
-            }
-            directionsGroup.position = new paper.Point(x, y);
-            return directionsGroup;
-          }
-
-          var directionListBounding = new Shape.Rectangle(new Point(700, 50), new Point(1150, 400))
-          directionListBounding.fillColor = 'rgba(17, 17, 17, 0.1)'
-
-          var directionList =  writeDirections(directionSteps, 800, 223, 1)
-          directionList.fitBounds(directionListBounding.bounds)
-          directionList.scale(0.9)
-          directionList.position.y = directionList.bounds.height/2 + 30
-          directionListBounding.remove()
-          paper.view.draw();
-
-
-
-
-        });
-      }
-
-
-
-
-
-      function fitConstellationGroup() {
-        // basic shitty function right now. should be smarter
-        var boundsHeight = directionConstellationGroup.bounds.height
-        var boundsWidth = directionConstellationGroup.bounds.width
-        if (boundsHeight > boundsWidth) {
-          directionConstellationGroup.rotate(90)
+          return pathGroup;
         }
+
+
+
+        var step = directionSteps[stepIndex]
+        var stepNumberPoint = new Point(givenX, givenY)
+          // var stepNumber = new PointText(stepNumberPoint)
+          // var stepNumber = new PointText({
+          //   point: stepNumberPoint,
+          //   content: stepIndex,
+          //   justification: 'center',
+          //   fillColor: 'black',
+          //   fontFamily: 'Helvetica'
+          // })
+
+        var stepNumber = write(String(stepIndex), givenX, givenY, 0.6)
+
+        // stepNumber.fontFamily = 'machine_script'
+        // stepNumber.justification = 'center'
+        // stepNumber.fillColor = 'black'
+        // stepNumber.content = stepIndex
+        var dist = STEP_NUMBER_DIST
+        var pointPossibilities = [
+          new Point(givenX, givenY - dist),
+          new Point(givenX + (dist / 2), givenY - dist),
+          new Point(givenX + dist, givenY),
+          new Point(givenX + dist, givenY + (dist / 2)),
+          new Point(givenX, givenY + dist),
+          new Point(givenX - (dist / 2), givenY + dist),
+          new Point(givenX - dist, givenY),
+          new Point(givenX - dist, givenY - (dist / 2))
+        ]
+        while (stepNumber.intersects(directionPath) || stepNumber.intersects(directionConstellationGroup)) {
+          var newStepNumberPoint = pointPossibilities[Math.floor(Math.random() * pointPossibilities.length)];
+          stepNumber.position = newStepNumberPoint
+        }
+        directionConstellationGroup.addChild(stepNumber)
+
+
+
+
+
+
+      })
+    }
+
+
+
+
+
+
+
+
+
+    function drawLandmarks() {
+
+      $.getJSON('hersheytext/hersheytext.min.json', function(fonts) {
+
+        // var path = new paper.Path(fonts[font].chars[56].d);
+        // path.strokeColor = 'black';
+        // path.Fill
+        // path.position.x += 100;
+
+        // path.strokeWidth = 1;
+
+
+
+        function write(s, x, y, scale) {
+
+          var pathGroup = new paper.Group({});
+
+          var start = 0;
+
+          var index = 0;
+
+          var words = s.split(' ');
+
+          var temp_words = new Array();
+
+          for (var w in words) {
+            word = words[w];
+            if (word.indexOf("'") != -1 && word.length > 1) {
+              word = word.split(/(?=('))/)
+              word[2] = word[2].substr(1)
+              temp_words = temp_words.concat(word)
+            } else if (word.indexOf(".") != -1 && word.length > 1) {
+              word = word.split(/(?=(\.))/)
+              word.pop()
+              temp_words = temp_words.concat(word)
+            } else {
+              temp_words.push(word)
+            }
+          }
+
+          words = temp_words;
+
+          for (var w in words) {
+            var word = words[w];
+            var wordPath;
+
+            // Move through each letter
+            // int offset =
+            for (var i in word) {
+              index = word.charCodeAt(i) - 33;
+
+              if (index >= 16 && index <= 24) {
+                font = "futural"
+              } else {
+                font = "scripts"
+              }
+
+              if (index == 54) {
+                index = 86
+              }
+
+              var path = new paper.Path(fonts[font].chars[index].d);
+
+              path.strokeColor = 'black';
+              path.strokeWidth = 1;
+
+              if (index != 6 && index != 13) {
+                start += 9 + fonts[font].chars[index].o;
+              }
+
+              path.position.x = start;
+
+              path.Fill
+              if (index == 83) {
+                path.position.x = start - 3;
+                var path2Data = 'M1,9 L8,9';
+                var path2 = new paper.Path(path2Data);
+                path2.position = new paper.Point(path.position.x - 2, path.position.y - 3)
+                path2.strokeColor = 'black';
+                path2.strokeWidth = 1;
+                pathGroup.addChild(path2);
+              } else if (index == 72) {
+                var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
+                var path2 = new paper.Path(path2Data);
+                path2.position = new paper.Point(path.position.x, path.position.y - 12)
+                path2.strokeColor = 'black';
+                path2.strokeWidth = 1;
+                pathGroup.addChild(path2);
+              } else if (index == 73) {
+                var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
+                var path2 = new paper.Path(path2Data);
+                path2.position = new paper.Point(path.position.x + 3, path.position.y - 18)
+                path2.strokeColor = 'black';
+                path2.strokeWidth = 1;
+                pathGroup.addChild(path2);
+              }
+
+              if (i == 0) {
+                wordPath = path;
+              } else {
+                wordPath.join(path);
+              }
+
+              if (index >= 27 && index <= 54) {
+                start += 4;
+              }
+
+            }
+
+            if (index != 6 && index != 13) {
+              start += 8;
+            }
+
+            if ((index <= 16 || index >= 24) && (word.indexOf("pp") == -1)) {
+              wordPath.simplify(2.2);
+            }
+
+            pathGroup.addChild(wordPath);
+
+          }
+
+          pathGroup.position = new paper.Point(x, y);
+          pathGroup.scale(scale);
+
+          return pathGroup;
+        }
+
+
+        for (i = 0; i < landmarks.length; i++) {
+          var latlng = new google.maps.LatLng(landmarks[i].lat, landmarks[i].lng)
+            // console.log(latlng.lat(), latlng.lng())
+          if (map.getBounds().contains(latlng) == true) {
+            var landmarkPixelCords = latLngControl.updatePosition(latlng)
+            landmarksInBounds.push({
+                cords: landmarkPixelCords,
+                name: landmarks[i].name
+              })
+              // var waypoint = new Shape.Circle(new Point(landmarkPixelCords[0], landmarkPixelCords[1]), 5);
+              // waypoint.strokeColor = 'black';
+
+          }
+        }
+        var placedLandmarkCount = 0;
+
+        function shuffle(array) {
+          var currentIndex = array.length,
+            temporaryValue, randomIndex;
+
+          // While there remain elements to shuffle...
+          while (0 !== currentIndex) {
+
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            // And swap it with the current element.
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+          }
+
+          return array;
+        }
+
+        landmarksInBounds = shuffle(landmarksInBounds)
+
+        var directionListBounding = new Shape.Rectangle(new Point(0, 447), new Point(1200, 380))
+        directionListBounding.fillColor = 'rgba(17, 17, 17, 0.1)'
+
+        var directionListBounding2 = new Shape.Rectangle(new Point(700, 0), new Point(1200, 447))
+        directionListBounding2.fillColor = 'rgba(17, 17, 17, 0.1)'
+
+        for (i = 0; i < landmarksInBounds.length; i++) {
+          // var landmarkGroup = new Group({})
+          var isTooClose = false
+            // var cloneDirectionPath = directionPath.clone({
+            //   insert: false
+            // })
+            // cloneDirectionPath.flatten(50)
+            // console.log(cloneDirectionPath.segments[0].point)
+          for (j = 0; j < directionPath.segments.length; j++) {
+            var landmarkPoint = new Point(landmarksInBounds[i].cords[0], landmarksInBounds[i].cords[1])
+            var starPoint = directionPath.segments[j].point
+            var distPath = new Path.Line(landmarkPoint, starPoint)
+            if (distPath.length < LANDMARK_MIN_DISTANCE || directionListBounding.contains(landmarkPoint) == true || directionListBounding2.contains(landmarkPoint) == true) {
+              // || distPath.length > LANDMARK_MAX_DISTANCE
+              isTooClose = true
+            }
+            distPath.remove()
+          }
+          if (isTooClose == false && placedLandmarkCount < 3) {
+            var landmark = new Path(starPath1)
+            landmark.scale(2)
+            landmark.rotate(Math.random() * 360)
+            landmark.position = new Point(landmarkPoint)
+            landmark.fillColor = 'black'
+              // var landmarkText = new PointText(landmarkPoint.x + 5, landmarkPoint.y + 10)
+              // landmarkText.content = landmarksInBounds[i].name
+              // landmarkText.fillColor = 'black'
+              // landmarkText.fontSize = '9'
+              // landmarkText.justification = 'left'
+
+            var landmarkText = write(landmarksInBounds[i].name, landmarkPoint.x + 5, landmarkPoint.y + 10, 0.6)
+            landmarkText.position.x += (landmarkText.bounds.width / 2)
+              // landmarkGroup.addChild(landmarkText)
+              // console.log(landmarkGroup.children)
+              // for(i = 0; i < landmarkGroup.children; i++){
+              //   console.log(landmarkGroup.children[i])
+              // }
+            if (landmarkText.intersects(directionPath)) {
+              landmarkText.position.x -= (landmarkText.bounds.width)
+              if (landmarkText.intersects(directionPath)) {
+                landmarkText.remove()
+                landmark.remove()
+                placedLandmarkCount -= 1
+              }
+            }
+
+            var testPath = new Path(new Point(directionPathBounding.bounds.width, 0), new Point(directionPathBounding.bounds.width, 1200))
+            if (landmarkText.intersects(testPath)) {
+              console.log("OH NO")
+              landmarkText.remove()
+              landmark.remove()
+              placedLandmarkCount -= 1
+            }
+            testPath.remove()
+            paper.view.draw();
+            placedLandmarkCount += 1
+          }
+        }
+
+
+
+        directionListBounding.remove()
+        directionListBounding2.remove()
+
+
+
+
+      });
+      drawDirections()
+    }
+
+
+
+
+    function drawDirections() {
+      $.getJSON('hersheytext/hersheytext.min.json', function(fonts) {
+
+        // var path = new paper.Path(fonts[font].chars[56].d);
+        // path.strokeColor = 'black';
+        // path.Fill
+        // path.position.x += 100;
+
+        // path.strokeWidth = 1;
+
+
+
+        function write(s, x, y, scale) {
+
+          var pathGroup = new paper.Group({});
+
+          var start = 0;
+
+          var index = 0;
+
+          var words = s.split(' ');
+
+          var temp_words = new Array();
+
+          for (var w in words) {
+            word = words[w];
+            if (word.indexOf("'") != -1 && word.length > 1) {
+              word = word.split(/(?=('))/)
+              word[2] = word[2].substr(1)
+              temp_words = temp_words.concat(word)
+            } else if (word.indexOf(".") != -1 && word.length > 1) {
+              word = word.split(/(?=(\.))/)
+              word.pop()
+              temp_words = temp_words.concat(word)
+            } else {
+              temp_words.push(word)
+            }
+          }
+
+          words = temp_words;
+
+          for (var w in words) {
+            var word = words[w];
+            var wordPath;
+
+            // Move through each letter
+            // int offset =
+            for (var i in word) {
+              index = word.charCodeAt(i) - 33;
+
+              if (index >= 16 && index <= 24) {
+                font = "futural"
+              } else {
+                font = "scripts"
+              }
+
+              if (index == 54) {
+                index = 86
+              }
+
+              var path = new paper.Path(fonts[font].chars[index].d);
+
+              path.strokeColor = 'black';
+              path.strokeWidth = 1;
+
+              if (index != 6 && index != 13) {
+                start += 9 + fonts[font].chars[index].o;
+              }
+
+              path.position.x = start;
+
+              path.Fill
+              if (index == 83) {
+                path.position.x = start - 3;
+                var path2Data = 'M1,9 L8,9';
+                var path2 = new paper.Path(path2Data);
+                path2.position = new paper.Point(path.position.x - 2, path.position.y - 3)
+                path2.strokeColor = 'black';
+                path2.strokeWidth = 1;
+                pathGroup.addChild(path2);
+              } else if (index == 72) {
+                var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
+                var path2 = new paper.Path(path2Data);
+                path2.position = new paper.Point(path.position.x, path.position.y - 12)
+                path2.strokeColor = 'black';
+                path2.strokeWidth = 1;
+                pathGroup.addChild(path2);
+              } else if (index == 73) {
+                var path2Data = 'M3,8 L3,9 4,9 4,8 3,8';
+                var path2 = new paper.Path(path2Data);
+                path2.position = new paper.Point(path.position.x + 3, path.position.y - 18)
+                path2.strokeColor = 'black';
+                path2.strokeWidth = 1;
+                pathGroup.addChild(path2);
+              }
+
+              if (i == 0) {
+                wordPath = path;
+              } else {
+                wordPath.join(path);
+              }
+
+              if (index >= 27 && index <= 54) {
+                start += 4;
+              }
+
+            }
+
+            if (index != 6 && index != 13) {
+              start += 8;
+            }
+
+            if ((index <= 16 || index >= 24) && (word.indexOf("pp") == -1)) {
+              wordPath.simplify(2.2);
+            }
+
+            pathGroup.addChild(wordPath);
+
+          }
+
+          pathGroup.position = new paper.Point(x, y);
+          pathGroup.scale(scale);
+
+          return pathGroup;
+        }
+
+
+
+
+
+        function writeDirections(directions, x, y, scale) {
+          directionsGroup = new paper.Group({});
+          var curStep = 1;
+          for (i in directions) {
+            direction = directions[i]["instructions"];
+            if (directions[i].isToward == false) {
+              i++;
+              console.log(directions[i - 1])
+              directionGroup = write(curStep + ". " + direction, 50, 50 * curStep, 1);
+              curStep += 1;
+              i--;
+              directionsGroup.addChild(directionGroup);
+              if (directionsGroup.children.length > 1) {
+                var offset = (directionGroup.bounds.width - directionsGroup.firstChild.bounds.width) / 2
+                directionGroup.position.x += offset;
+              }
+            }
+          }
+          var destination = write("Arrive at " + FINAL_DESTINATION_NAME, 50, 50 * curStep, 1)
+          directionsGroup.addChild(destination)
+          directionsGroup.position = new paper.Point(x, y);
+          return directionsGroup;
+        }
+
+        var directionListBounding = new Shape.Rectangle(new Point(720, 50), new Point(1150, 400))
+        directionListBounding.fillColor = 'rgba(17, 17, 17, 0.1)'
+
+        var directionList = writeDirections(directionSteps, 800, 223, 1)
+        directionList.fitBounds(directionListBounding.bounds)
+        directionList.scale(0.9)
+        directionList.position.y = directionList.bounds.height / 2 + 80
+
+
+        var nameContent = PERSONS_NAME + "'s directions"
+        var nameTitle = write(nameContent, 925, 30, 1)
+        nameTitle.fitBounds(directionListBounding.bounds)
+        nameTitle.scale(0.7)
+        nameTitle.position = new Point(925, 50)
+
+        directionListBounding.remove()
+
+
+
+        project.importSVG("/svgs/logo.svg", function(item) {
+          // console.log(item);
+          item.position = new Point(950, 370);
+          // item.scale(0.8)
+        });
+
+
+
+
+
+        paper.view.draw();
+        setTimeout(function() {
+          exportAndSaveIMG()
+        }, 2000);
+
+
+
+
+      });
+    }
+
+
+
+
+
+    function fitConstellationGroup() {
+      // basic shitty function right now. should be smarter
+      var boundsHeight = directionConstellationGroup.bounds.height
+      var boundsWidth = directionConstellationGroup.bounds.width
+      if (boundsHeight > boundsWidth) {
+        directionConstellationGroup.rotate(90)
       }
+    }
 
 
-      google.maps.event.addDomListener(window, 'load', init);
+    google.maps.event.addDomListener(window, 'load', init);
   </script>
 
 

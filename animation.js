@@ -9,7 +9,7 @@ function downloadDataUri(options) {
   $('<form method="post" action="' + options.url + '" style="display:none"><input type="hidden" name="filename" value="' + options.filename + '"/><input type="hidden" name="data" value="' + options.data + '"/></form>').appendTo('body').submit().remove();
 }
 
-function onMouseDown(event) {
+function exportAndSaveIMG(){
   var svg = project.exportSVG({
     asString: true
   });
@@ -249,5 +249,5 @@ function pickDestination(opt1, opt2) {
     }
   }
   console.log(PERSONS_NAME + " will be navigating to " + finalDestination.name + " at " + String(finalDestination.lat) + ", " + String(finalDestination.lng))
-  getDirections(directionsService, "40.444359, -79.941564", String(finalDestination.lat) + ", " + String(finalDestination.lng))
+  getDirections(directionsService, "40.444359, -79.941564", String(finalDestination.lat) + ", " + String(finalDestination.lng), PERSONS_NAME, finalDestination.name)
 }

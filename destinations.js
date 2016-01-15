@@ -7,14 +7,6 @@ var destinations = [{
   trueAnswer: "You just get me sometimes. ",
   falseAnswer: "How could I, birds dress me in the morning. "
 }, {
-  name: "Schenley Park Cafe",
-  lat: 40.438377,
-  lng: -79.946460,
-  description: "Quiet coffee shop with a beautiful view",
-  question: "Preferred painting ? ",
-  trueAnswer: "Caspar Friedrich's: Wanderer Above a Sea of Fog",
-  falseAnswer: "Nicolas Cage's The Pheasant Has No Agenda"
-}, {
   name: "Forbes Field Outfield Wall",
   lat: 40.441581,
   lng: -79.952815,
