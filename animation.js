@@ -205,7 +205,7 @@ $(document).ready(function() {
 
 		setTimeout(function(){
     $("#step4 span").text("Tap the coffee icon to begin!")
-}, 5000);
+    console.log("last line of step 3")}, 5000);
 
   }
 
@@ -254,5 +254,6 @@ function pickDestination(opt1, opt2) {
     }
   }
   console.log(PERSONS_NAME + " will be navigating to " + finalDestination.name + " at " + String(finalDestination.lat) + ", " + String(finalDestination.lng))
-  getDirections(directionsService, "40.444359, -79.941564", String(finalDestination.lat) + ", " + String(finalDestination.lng), PERSONS_NAME, finalDestination.name)
+  getDirections(directionsService, "40.4657274, -79.9557503", String(finalDestination.lat) + ", " + String(finalDestination.lng), PERSONS_NAME, finalDestination.name)
+  console.log("finished pickDestination");
 }
